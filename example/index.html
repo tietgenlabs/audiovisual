@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="coffee-script.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
+    <script type="text/coffeescript" src="../polar-plot.coffee"></script>
+    <style>
+      body {
+        font-family: helvetica;
+      }
+      .ring-label-svg {
+        font-size: 14px;
+        text-anchor: middle;
+      }
+      .ring-svg {
+        stroke: grey;
+        stroke-opacity: 0.75;
+        stroke-width: 0.3px;
+      }
+      .axis-svg {
+        stroke: #CCC;
+        stroke-width: 1px;
+      }
+      .axis-label-svg {
+        font-size: 15px;
+        text-anchor: middle;
+        font-weight: bold;
+        fill: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="plot"></div>
+    <script type="text/coffeescript">
+      polarPlot = new PolarPlot '#plot',
+        levels: 5
+        factor: 6
+        radius: 5
+        radians: 2 * Math.PI
+        width: 600
+        height: 600
+        translateX: 80
+        translateY: 30
+        extraWidthX: 100
+        extraWidthY: 100
+        ringLabelRight: 0
+        ringLabelTop: 5
+        factorLegend: 0.5
+
+      polarPlot.draw
+        ringLabels: ['-15', '-10', '-5', '0', '5']
+        axisLabels: [
+          {label: '0', axis: 0}
+          {label: '', axis: 20}
+          {label: '45', axis: 45}
+          {label: '', axis: 67}
+          {label: '90', axis: 90}
+          {label: '', axis: 113}
+          {label: '135', axis: 135}
+          {label: '', axis: 157}
+          {label: '180', axis: 180}
+          {label: '', axis: 203}
+          {label: '225', axis: 225}
+          {label: '', axis: 257}
+          {label: '270', axis: 270}
+          {label: '', axis: 293}
+          {label: '315', axis: 315}
+          {label: '', axis: 337}
+        ]
+
+    </script>
+  </body>
+</html>
