@@ -42,7 +42,7 @@ class PolarPlot
       )
 
     axis.append("line")
-      .attr("x2", radius)
+      .attr("x2", radius - @axisLineLengthOffset)
       .attr("class", "axis-svg")
 
     axis.append("text")
