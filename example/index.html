@@ -36,9 +36,12 @@
       polarPlot = new PolarPlot '#plot',
         width: 500
         height: 500
-        ringLabelRight: 0
-        circleLabelTop: -5
+        circleLabelOffsetY: -5
+        circleLabelOffsetX: 0
         padding: 30
+        zeroOffset: 90
+        axisLabelOffsetX: 10
+        axisLabelOffsetY: 0
 
       polarPlot.draw
         ringLabels: [

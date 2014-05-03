@@ -2,35 +2,40 @@ class PolarPlot
   constructor: (@id, options) ->
     (@[key] = value for key, value of options)
 
+    @paddedHeight = @height - @padding
+    @paddedWidth = @width - @padding
+
   renderCircles: (graph, radiusFunc) ->
     for level in [0...@ringLabels.length]
       graph.selectAll(".levels")
        .data([1])
        .enter()
        .append("circle")
-       .attr("r", (d, i) => radiusFunc(level))
+       .attr("r", radiusFunc(level))
        .attr("class", "ring-svg")
-       .style("fill", => @ringLabels[level].fill)
-       .style("fill-opacity", => @ringLabels[level].opacity)
+       .style("fill", @ringLabels[level].fill)
+       .style("fill-opacity", @ringLabels[level].opacity)
 
       graph.selectAll(".levels")
        .data([1])
        .enter()
        .append("svg:text")
-       .attr("x", 0)
-       .attr("y", (d, i) => -radiusFunc(level) - @circleLabelTop)
+       .attr("x", @circleLabelOffsetX)
+       .attr("y", -radiusFunc(level) - @circleLabelOffsetY)
        .attr("class", "ring-label-svg")
        .text(@ringLabels[level].label)
 
   renderAxis: (graph) ->
     axisValues = @axisLabels.map (a) -> a.axis
-    radius = Math.min(@width - @padding, @height - @padding) / 2 - 20
+    radius = Math.min(@paddedWidth, @paddedHeight) / 2 - 20
 
     axis = graph.selectAll(".axis")
       .data(axisValues)
       .enter()
       .append("g")
-      .attr("transform", (d) -> "rotate(#{d})")
+      .attr("transform", (d) =>
+        "rotate(#{d - @zeroOffset})"
+      )
 
     axis.append("line")
       .attr("x2", radius)
@@ -40,12 +45,13 @@ class PolarPlot
       .attr("x", radius)
       .attr("dy", ".35em")
       .attr("class", "axis-label-svg")
-      .style("text-anchor", (d) -> if d < 270 && d > 90 then "end" else null)
-      .attr("transform", (d) -> if d < 270 && d > 90 then "rotate(180 #{radius}, 0)" else null)
-      .text((d, i) => @axisLabels[i].label)
+      .attr("transform", "translate(#{@axisLabelOffsetX}, #{@axisLabelOffsetY})")
+      .text((d, i) =>
+        @axisLabels[i].label
+      )
 
   draw: ({@ringLabels, @axisLabels}) ->
-    circleConstraint = d3.min [@height - @padding, @width - @padding]
+    circleConstraint = d3.min [@paddedHeight, @paddedWidth]
     radiusFunc = d3.scale.linear().domain([0, @ringLabels.length]).range([0, (circleConstraint / 2)])
 
     graph = d3.select(@id)
