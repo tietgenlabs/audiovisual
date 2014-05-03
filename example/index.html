@@ -16,6 +16,10 @@
         font-size: 14px;
         text-anchor: middle;
         z-index: 10;
+        fill: #777;
+      }
+      .ring-svg.last-child {
+        stroke: #AAA;
       }
       .axis-svg {
         stroke: #FFF;
@@ -25,8 +29,7 @@
       .axis-label-svg {
         font-size: 15px;
         text-anchor: middle;
-        font-weight: bold;
-        fill: #000;
+        fill: #999;
       }
     </style>
   </head>
@@ -42,16 +45,17 @@
         zeroOffset: 90
         axisLabelOffsetX: 10
         axisLabelOffsetY: 0
+        axisLabelRotationOffset: 90
 
       polarPlot.draw
         ringLabels: [
-          {label: '', fill: '#888', opacity: 1}
-          {label: '', fill: '#888', opacity: 1}
-          {label: '-15', fill: '#888', opacity: 1}
-          {label: '-10', fill: '#888', opacity: 0.4}
-          {label: '-5', fill: '#888', opacity: 0.3}
-          {label: '0', fill: '#888', opacity: 0.2}
-          {label: '5', fill: '#888', opacity: 0.1}
+          {label: '', fill: '#AAA', opacity: 1}
+          {label: '', fill: '#AAA', opacity: 1}
+          {label: '-15', fill: '#AAA', opacity: 1}
+          {label: '-10', fill: '#AAA', opacity: 0.4}
+          {label: '-5', fill: '#AAA', opacity: 0.3}
+          {label: '0', fill: '#AAA', opacity: 0.2}
+          {label: '5', fill: '#AAA', opacity: 0.1}
         ]
         axisLabels: [
           {label: '0', axis: 0}

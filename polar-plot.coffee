@@ -12,7 +12,11 @@ class PolarPlot
        .enter()
        .append("circle")
        .attr("r", radiusFunc(level))
-       .attr("class", "ring-svg")
+       .attr("class", =>
+         classNames = "ring-svg"
+         classNames += " last-child" if (level + 1) == @ringLabels.length
+         classNames
+       )
        .style("fill", @ringLabels[level].fill)
        .style("fill-opacity", @ringLabels[level].opacity)
 
@@ -45,7 +49,9 @@ class PolarPlot
       .attr("x", radius)
       .attr("dy", ".35em")
       .attr("class", "axis-label-svg")
-      .attr("transform", "translate(#{@axisLabelOffsetX}, #{@axisLabelOffsetY})")
+      .attr("transform", (d) =>
+        "translate(#{@axisLabelOffsetX}, #{@axisLabelOffsetY}) rotate(#{@axisLabelRotationOffset - d}, #{radius}, 0)"
+      )
       .text((d, i) =>
         @axisLabels[i].label
       )
@@ -59,7 +65,7 @@ class PolarPlot
       .attr("width", @width)
       .attr("height", @height)
       .append("g")
-      .attr("transform", "translate(" + ((@width) / 2) + ", " + ((@height) / 2) + ")")
+      .attr("transform", "translate(#{@width / 2}, #{@height / 2})")
 
     @renderCircles(graph, radiusFunc)
     @renderAxis(graph)
