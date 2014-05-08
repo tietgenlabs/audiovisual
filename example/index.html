@@ -43,20 +43,20 @@
         circleLabelOffsetX: 0
         padding: 30
         zeroOffset: 90
-        axisLabelOffsetX: 10
+        axisLabelOffsetX: 20
         axisLabelOffsetY: 0
         axisLabelRotationOffset: 90
-        axisLineLengthOffset: 14
+        axisLineLengthOffset: 0
+        outerPaddingForAxisLabels: 20
 
       polarPlot.draw
         ringLabels: [
-          {label: '', fill: '#AAA', opacity: 1}
-          {label: '', fill: '#AAA', opacity: 1}
-          {label: '-15', fill: '#AAA', opacity: 1}
-          {label: '-10', fill: '#AAA', opacity: 0.4}
-          {label: '-5', fill: '#AAA', opacity: 0.3}
-          {label: '0', fill: '#AAA', opacity: 0.2}
-          {label: '5', fill: '#AAA', opacity: 0.1}
+          {label: '-15', value: -15, fill: '#AAA', opacity: 1}
+          {label: '-15', value: -15, fill: '#AAA', opacity: 1}
+          {label: '-10', value: -10, fill: '#AAA', opacity: 0.4}
+          {label: '-5', value: -5, fill: '#AAA', opacity: 0.3}
+          {label: '0', value: 0, fill: '#AAA', opacity: 0.2}
+          {label: '5', value: 5, fill: '#AAA', opacity: 0.1}
         ]
         axisLabels: [
           {label: '0', axis: 0}

@@ -6,32 +6,30 @@ class PolarPlot
     @paddedWidth = @width - @padding
 
   renderCircles: (graph, radiusFunc) ->
-    for level in [0...@ringLabels.length]
-      graph.selectAll(".levels")
-       .data([1])
-       .enter()
-       .append("circle")
-       .attr("r", radiusFunc(level))
-       .attr("class", =>
-         classNames = "ring-svg"
-         classNames += " last-child" if (level + 1) == @ringLabels.length
-         classNames
-       )
-       .style("fill", @ringLabels[level].fill)
-       .style("fill-opacity", @ringLabels[level].opacity)
+    levels = graph.selectAll(".levels")
+      .data(@ringLabels)
+      .enter()
+      .append("g")
 
-      graph.selectAll(".levels")
-       .data([1])
-       .enter()
-       .append("svg:text")
-       .attr("x", @circleLabelOffsetX)
-       .attr("y", -radiusFunc(level) - @circleLabelOffsetY)
-       .attr("class", "ring-label-svg")
-       .text(@ringLabels[level].label)
+    levels.append("circle")
+      .attr("r", (d) -> radiusFunc(d.value))
+      .attr("class", (d, i) =>
+        classNames = "ring-svg"
+        classNames += " last-child" if (i + 1) == @ringLabels.length
+        classNames
+      )
+      .style("fill", (d) -> d.fill)
+      .style("fill-opacity", (d) -> d.opacity)
+
+    levels.append("svg:text")
+      .attr("x", @circleLabelOffsetX)
+      .attr("y", (d) => -radiusFunc(d.value) - @circleLabelOffsetY)
+      .attr("class", "ring-label-svg")
+      .text((d) -> d.label)
 
   renderAxis: (graph) ->
     axisValues = @axisLabels.map (a) -> a.axis
-    radius = Math.min(@paddedWidth, @paddedHeight) / 2 - 20
+    radius = Math.min(@paddedWidth, @paddedHeight) / 2 - @outerPaddingForAxisLabels
 
     axis = graph.selectAll(".axis")
       .data(axisValues)
@@ -58,7 +56,7 @@ class PolarPlot
 
   draw: ({@ringLabels, @axisLabels}) ->
     circleConstraint = d3.min [@paddedHeight, @paddedWidth]
-    radiusFunc = d3.scale.linear().domain([0, @ringLabels.length]).range([0, (circleConstraint / 2)])
+    radiusFunc = d3.scale.linear().domain([-25, 5]).range([0, (circleConstraint / 2) - @outerPaddingForAxisLabels])
 
     graph = d3.select(@id)
       .append("svg")
