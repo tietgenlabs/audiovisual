@@ -1,9 +1,12 @@
 class PolarPlot
   constructor: (@id, options) ->
+    @outerPaddingForAxisLabels = 0 # default
     (@[key] = value for key, value of options)
 
     @paddedHeight = @height - @padding
     @paddedWidth = @width - @padding
+
+    @radius = Math.min(@paddedWidth, @paddedHeight) / 2 - @outerPaddingForAxisLabels
 
   renderCircles: (graph, radiusFunc) ->
     levels = graph.selectAll(".levels")
@@ -29,7 +32,6 @@ class PolarPlot
 
   renderAxis: (graph) ->
     axisValues = @axisLabels.map (a) -> a.axis
-    radius = Math.min(@paddedWidth, @paddedHeight) / 2 - @outerPaddingForAxisLabels
 
     axis = graph.selectAll(".axis")
       .data(axisValues)
@@ -40,23 +42,28 @@ class PolarPlot
       )
 
     axis.append("line")
-      .attr("x2", radius - @axisLineLengthOffset)
+      .attr("x2", @radius - @axisLineLengthOffset)
       .attr("class", "axis-svg")
 
     axis.append("text")
-      .attr("x", radius)
+      .attr("x", @radius)
       .attr("dy", ".35em")
       .attr("class", "axis-label-svg")
       .attr("transform", (d) =>
-        "translate(#{@axisLabelOffsetX}, #{@axisLabelOffsetY}) rotate(#{@axisLabelRotationOffset - d}, #{radius}, 0)"
+        "translate(#{@axisLabelOffsetX}, #{@axisLabelOffsetY}) rotate(#{@axisLabelRotationOffset - d}, #{@radius}, 0)"
       )
       .text((d, i) =>
         @axisLabels[i].label
       )
 
   draw: ({@ringLabels, @axisLabels}) ->
-    circleConstraint = d3.min [@paddedHeight, @paddedWidth]
-    radiusFunc = d3.scale.linear().domain([-25, 5]).range([0, (circleConstraint / 2) - @outerPaddingForAxisLabels])
+    values = (label.value for label in @ringLabels)
+
+    # Use apply because max/min are expecting arguments...
+    minRingValue = Math.min.apply(Math, values)
+    maxRingValue = Math.max.apply(Math, values)
+
+    radiusFunc = d3.scale.linear().domain([minRingValue, maxRingValue]).range([0, @radius])
 
     graph = d3.select(@id)
       .append("svg")
