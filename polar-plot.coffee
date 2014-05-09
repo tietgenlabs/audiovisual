@@ -2,6 +2,12 @@ class PolarPlot
   constructor: (@id, options) ->
     @config =
       outerPaddingForAxisLabels: 0
+      axisLabelOffsetY: 0
+      axisLineLengthOffset: 0
+      circleLabelOffsetX: 0
+      radialInpolation: 'basis'
+      width: 500
+      height: 500
 
     (@config[key] = value for key, value of options)
 
@@ -35,14 +41,18 @@ class PolarPlot
       .angle((d) => d.axis * (Math.PI / 180))
       .interpolate(@config.radialInpolation)
 
-    radial = @graph.append("path")
-      .datum(data)
-      .attr("class", "radial")
-      .attr("id", id)
-      .attr("d", line)
+    radial = null
 
-    # Operations to perform on radial
-    remove: -> radial.remove()
+    render: =>
+      radial = @graph.append("path")
+        .datum(data)
+        .attr("class", "radial")
+        .attr("id", id)
+        .attr("d", line)
+
+    remove: ->
+      radial.remove()
+
 
 renderCircles = (graph, labels, config, customRadius) ->
   levels = graph.selectAll(".levels")

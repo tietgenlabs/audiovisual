@@ -31,36 +31,49 @@
         text-anchor: middle;
         fill: #999;
       }
-      .radial {
+      #frequency_1000 {
         fill: #4D90FE;
         fill-opacity: 0.3;
         stroke: #4D90FE;
         stroke-width: 1px;
       }
-      .line2 {
+      #frequency_4000 {
         fill: #CB4437;
         fill-opacity: 0.3;
         stroke: #CB4437;
         stroke-width: 1px;
       }
+      a {
+        display: inline-block;
+        border: 2px solid #CCC;
+        background: #EEE;
+        color: #000;
+        padding: 20px 100px;
+        text-decoration: none;
+        font-size: 18px;
+      }
+      #fre_1000.on {
+        background: rgba(77, 144, 254, 0.3);
+        border-color: #4D90FE;
+      }
+      #fre_4000.on {
+        background: rgba(203, 68, 55, 0.3);
+        border-color: #CB4437;
+      }
     </style>
   </head>
   <body>
+    <a href="#" id="fre_1000">1000Hz</a>
+    <a href="#" id="fre_4000">4000Hz</a>
     <div id="plot"></div>
     <script type="text/coffeescript">
       polarPlot = new PolarPlot '#plot',
-        width: 500
-        height: 500
         circleLabelOffsetY: -5
-        circleLabelOffsetX: 0
         padding: 30
         zeroOffset: 90
         axisLabelOffsetX: 20
-        axisLabelOffsetY: 0
         axisLabelRotationOffset: 90
-        axisLineLengthOffset: 0
         outerPaddingForAxisLabels: 20
-        radialInpolation: 'basis'
 
       polarPlot.draw
         ringLabels: [
@@ -90,7 +103,47 @@
           {label: '', axis: 337}
         ]
 
-      radial = polarPlot.radial 'frequency_4000', [
+      radial1000 = polarPlot.radial 'frequency_1000', [
+        {axis: 0, value: 0}
+        {axis: 10, value: 1.2}
+        {axis: 20, value: 2.0}
+        {axis: 30, value: 2.4}
+        {axis: 40, value: 3.2}
+        {axis: 50, value: 3.7}
+        {axis: 60, value: 3.9}
+        {axis: 70, value: 4.2}
+        {axis: 80, value: 4.3}
+        {axis: 90, value: 4.1}
+        {axis: 100, value: 4.2}
+        {axis: 110, value: 4.0}
+        {axis: 120, value: 4.0}
+        {axis: 130, value: 3.7}
+        {axis: 140, value: 3.5}
+        {axis: 150, value: 3.2}
+        {axis: 160, value: 2.8}
+        {axis: 170, value: 2.2}
+        {axis: 180, value: 1.4}
+        {axis: 190, value: 0.2}
+        {axis: 200, value: -1.2}
+        {axis: 210, value: -2.7}
+        {axis: 220, value: -4.1}
+        {axis: 230, value: -4.3}
+        {axis: 240, value: -3.5}
+        {axis: 250, value: -2.5}
+        {axis: 260, value: -1.4}
+        {axis: 270, value: -1.2}
+        {axis: 280, value: -0.9}
+        {axis: 290, value: -1.7}
+        {axis: 300, value: -2.4}
+        {axis: 310, value: -3.6}
+        {axis: 320, value: -4.1}
+        {axis: 330, value: -3.5}
+        {axis: 340, value: -2.6}
+        {axis: 350, value: -1.2}
+        {axis: 0, value: 0}
+      ]
+
+      radial4000 = polarPlot.radial 'frequency_4000', [
         {axis: 0, value: 0}
         {axis: 10, value: 1.5}
         {axis: 20, value: 3.2}
@@ -129,6 +182,18 @@
         {axis: 350, value: -2.0}
         {axis: 0, value: 0}
       ]
+
+      listerner = (ev, radial) ->
+        el = ev.currentTarget
+        if el.className.match /on/
+          el.className = ''
+          radial.remove()
+        else
+          el.className = 'on'
+          radial.render()
+
+      document.getElementById("fre_1000").addEventListener 'click', (ev) -> listerner(ev, radial1000)
+      document.getElementById("fre_4000").addEventListener 'click', (ev) -> listerner(ev, radial4000)
 
     </script>
   </body>
