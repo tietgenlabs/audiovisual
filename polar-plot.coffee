@@ -1,78 +1,95 @@
 class PolarPlot
   constructor: (@id, options) ->
-    @outerPaddingForAxisLabels = 0 # default
-    (@[key] = value for key, value of options)
+    @config =
+      outerPaddingForAxisLabels: 0
 
-    @paddedHeight = @height - @padding
-    @paddedWidth = @width - @padding
+    (@config[key] = value for key, value of options)
 
-    @radius = Math.min(@paddedWidth, @paddedHeight) / 2 - @outerPaddingForAxisLabels
+    @config.paddedHeight = @config.height - @config.padding
+    @config.paddedWidth = @config.width - @config.padding
 
-  renderCircles: (graph, radiusFunc) ->
-    levels = graph.selectAll(".levels")
-      .data(@ringLabels)
-      .enter()
-      .append("g")
+    @config.radius = Math.min(@config.paddedWidth, @config.paddedHeight) / 2 - @config.outerPaddingForAxisLabels
 
-    levels.append("circle")
-      .attr("r", (d) -> radiusFunc(d.value))
-      .attr("class", (d, i) =>
-        classNames = "ring-svg"
-        classNames += " last-child" if (i + 1) == @ringLabels.length
-        classNames
-      )
-      .style("fill", (d) -> d.fill)
-      .style("fill-opacity", (d) -> d.opacity)
-
-    levels.append("svg:text")
-      .attr("x", @circleLabelOffsetX)
-      .attr("y", (d) => -radiusFunc(d.value) - @circleLabelOffsetY)
-      .attr("class", "ring-label-svg")
-      .text((d) -> d.label)
-
-  renderAxis: (graph) ->
-    axisValues = @axisLabels.map (a) -> a.axis
-
-    axis = graph.selectAll(".axis")
-      .data(axisValues)
-      .enter()
-      .append("g")
-      .attr("transform", (d) =>
-        "rotate(#{d - @zeroOffset})"
-      )
-
-    axis.append("line")
-      .attr("x2", @radius - @axisLineLengthOffset)
-      .attr("class", "axis-svg")
-
-    axis.append("text")
-      .attr("x", @radius)
-      .attr("dy", ".35em")
-      .attr("class", "axis-label-svg")
-      .attr("transform", (d) =>
-        "translate(#{@axisLabelOffsetX}, #{@axisLabelOffsetY}) rotate(#{@axisLabelRotationOffset - d}, #{@radius}, 0)"
-      )
-      .text((d, i) =>
-        @axisLabels[i].label
-      )
-
-  draw: ({@ringLabels, @axisLabels}) ->
-    values = (label.value for label in @ringLabels)
+  draw: ({ringLabels, axisLabels}) ->
+    values = (label.value for label in ringLabels)
 
     # Use apply because max/min are expecting arguments...
     minRingValue = Math.min.apply(Math, values)
     maxRingValue = Math.max.apply(Math, values)
 
-    radiusFunc = d3.scale.linear().domain([minRingValue, maxRingValue]).range([0, @radius])
+    @customRadius = d3.scale.linear().domain([minRingValue, maxRingValue]).range([0, @config.radius])
 
-    graph = d3.select(@id)
+    @graph = d3.select(@id)
       .append("svg")
-      .attr("width", @width)
-      .attr("height", @height)
+      .attr("width", @config.width)
+      .attr("height", @config.height)
       .append("g")
-      .attr("transform", "translate(#{@width / 2}, #{@height / 2})")
+      .attr("transform", "translate(#{@config.width / 2}, #{@config.height / 2})")
 
-    @renderCircles(graph, radiusFunc)
-    @renderAxis(graph)
+    renderCircles(@graph, ringLabels, @config, @customRadius)
+    renderAxis(@graph, axisLabels, @config)
+
+  radial: (id, data) ->
+    line = d3.svg.line.radial()
+      .radius((d) => @customRadius(d.value))
+      .angle((d) => d.axis * (Math.PI / 180))
+      .interpolate(@config.radialInpolation)
+
+    radial = @graph.append("path")
+      .datum(data)
+      .attr("class", "radial")
+      .attr("id", id)
+      .attr("d", line)
+
+    # Operations to perform on radial
+    remove: -> radial.remove()
+
+renderCircles = (graph, labels, config, customRadius) ->
+  levels = graph.selectAll(".levels")
+    .data(labels)
+    .enter()
+    .append("g")
+
+  levels.append("circle")
+    .attr("r", (d) -> customRadius(d.value))
+    .attr("class", (d, i) ->
+      classNames = "ring-svg"
+      classNames += " last-child" if (i + 1) == labels.length
+      classNames
+    )
+    .style("fill", (d) -> d.fill)
+    .style("fill-opacity", (d) -> d.opacity)
+
+  levels.append("svg:text")
+    .attr("x", config.circleLabelOffsetX)
+    .attr("y", (d) -> -customRadius(d.value) - config.circleLabelOffsetY)
+    .attr("class", "ring-label-svg")
+    .text((d) -> d.label)
+
+renderAxis = (graph, labels, config) ->
+  axis = graph.selectAll(".axis")
+    .data(labels)
+    .enter()
+    .append("g")
+    .attr("transform", (d) =>
+      "rotate(#{d.axis - config.zeroOffset})"
+    )
+
+  axis.append("line")
+    .attr("x2", config.radius - config.axisLineLengthOffset)
+    .attr("class", "axis-svg")
+
+  axis.append("text")
+    .attr("x", config.radius)
+    .attr("dy", ".35em")
+    .attr("class", "axis-label-svg")
+    .attr("transform", (d) =>
+      translate = "translate(#{config.axisLabelOffsetX}, #{config.axisLabelOffsetY})"
+      rotate = "rotate(#{config.axisLabelRotationOffset - d.axis}, #{config.radius}, 0)"
+      "#{translate} #{rotate}"
+    )
+    .text((d, i) =>
+      d.label
+    )
 
 window.PolarPlot = PolarPlot
