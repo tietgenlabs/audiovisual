@@ -48,7 +48,7 @@ class PolarPlot
           (t) =>
             degree = interpolate(t)
             (callback(degree) for callback in @degreeCallbacks)
-            "rotate(#{degree})"
+            "rotate(#{degree - @config.zeroOffset})"
         )
         .duration(@config.radarRotationSpeed)
 
