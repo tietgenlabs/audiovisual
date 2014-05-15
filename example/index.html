@@ -31,6 +31,11 @@
         text-anchor: middle;
         fill: #999;
       }
+      .direction-svg {
+        stroke: yellow;
+        stroke-width: 3px;
+        z-index: 1;
+      }
       #frequency_1000 {
         fill: #4D90FE;
         fill-opacity: 0.3;
@@ -43,8 +48,13 @@
         stroke: #CB4437;
         stroke-width: 1px;
       }
-      a {
+      li {
+        height: 100px;
+        width: 300px;
         display: inline-block;
+      }
+      a {
+        display: block;
         border: 2px solid #CCC;
         background: #EEE;
         color: #000;
@@ -63,8 +73,18 @@
     </style>
   </head>
   <body>
-    <a href="#" id="fre_1000">1000Hz</a>
-    <a href="#" id="fre_4000">4000Hz</a>
+    <ul>
+      <li>
+        <a href="#" id="fre_1000">1000Hz</a>
+        <div>Degree: <span id="degree_1000"></span></div>
+        <div>Value: <span id="value_1000"></span></div>
+      </li>
+      <li>
+        <a href="#" id="fre_4000">4000Hz</a>
+        <div>Degree: <span id="degree_4000"></span></div>
+        <div>Value: <span id="value_4000"></span></div>
+      </li>
+    </ul>
     <div id="plot"></div>
     <script type="text/coffeescript">
       polarPlot = new PolarPlot '#plot',
@@ -140,8 +160,10 @@
         {axis: 330, value: -3.5}
         {axis: 340, value: -2.6}
         {axis: 350, value: -1.2}
-        {axis: 0, value: 0}
-      ]
+        {axis: 360, value: 0}
+      ], (degree, value) ->
+        document.getElementById('degree_1000').innerHTML = Math.round(degree)
+        document.getElementById('value_1000').innerHTML = value
 
       radial4000 = polarPlot.radial 'frequency_4000', [
         {axis: 0, value: 0}
@@ -180,8 +202,10 @@
         {axis: 330, value: -6.3}
         {axis: 340, value: -4.3}
         {axis: 350, value: -2.0}
-        {axis: 0, value: 0}
-      ]
+        {axis: 360, value: 0}
+      ], (degree, value) ->
+        document.getElementById('degree_4000').innerHTML = Math.round(degree)
+        document.getElementById('value_4000').innerHTML = value
 
       listerner = (ev, radial) ->
         el = ev.currentTarget

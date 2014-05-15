@@ -6,6 +6,7 @@ class PolarPlot
       axisLineLengthOffset: 0
       circleLabelOffsetX: 0
       radialInpolation: 'basis'
+      radarRotationSpeed: 10000
       width: 500
       height: 500
 
@@ -16,7 +17,9 @@ class PolarPlot
 
     @config.radius = Math.min(@config.paddedWidth, @config.paddedHeight) / 2 - @config.outerPaddingForAxisLabels
 
-  draw: ({ringLabels, axisLabels}) ->
+    @degreeCallbacks = []
+
+  draw: ({ringLabels, axisLabels}, @radarCallback) ->
     values = (label.value for label in ringLabels)
 
     # Use apply because max/min are expecting arguments...
@@ -34,8 +37,35 @@ class PolarPlot
 
     renderCircles(@graph, ringLabels, @config, @customRadius)
     renderAxis(@graph, axisLabels, @config)
+    direction = renderDirection(@graph, @config)
 
-  radial: (id, data) ->
+    rotate = =>
+      direction
+        .transition()
+        .ease("linear")
+        .attrTween("transform", (d, i) =>
+          interpolate = d3.interpolate(0, 360)
+          (t) =>
+            degree = interpolate(t)
+            (callback(degree) for callback in @degreeCallbacks)
+            "rotate(#{degree})"
+        )
+        .duration(@config.radarRotationSpeed)
+
+    rotate()
+    setInterval rotate, @config.radarRotationSpeed
+
+  radial: (id, data, degreeCallback) ->
+    # order data
+    wrappedDegreeCallback = (degree) ->
+      for point, i in data
+        if Math.round(degree) <= point.axis
+          foundPoint = data[i]
+          break
+      degreeCallback(degree, foundPoint?.value)
+
+    @degreeCallbacks.push wrappedDegreeCallback
+
     line = d3.svg.line.radial()
       .radius((d) => @customRadius(d.value))
       .angle((d) => d.axis * (Math.PI / 180))
@@ -101,5 +131,10 @@ renderAxis = (graph, labels, config) ->
     .text((d, i) =>
       d.label
     )
+
+renderDirection = (graph, config, radarCallback = ->) ->
+  graph.append("line")
+    .attr("x2", config.radius - config.axisLineLengthOffset)
+    .attr("class", "direction-svg")
 
 window.PolarPlot = PolarPlot
