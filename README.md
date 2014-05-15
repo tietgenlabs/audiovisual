@@ -12,4 +12,4 @@ Usage
 Credits
 =============
 
-Build with support from [GN ReSound](http://www.gnresound.com/) via [Tom Kersten](https://tomkersten.github.io). Designed by [Pete Nawara](https://github.com/petebot).
+Built with support from [GN ReSound](http://www.gnresound.com/) via [Tom Kersten](https://tomkersten.github.io). Designed by [Pete Nawara](https://github.com/petebot).
