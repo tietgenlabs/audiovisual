@@ -1,15 +1,10 @@
-Custom polar plot for D3
+Audiovisual.js
 ==========
 
-A polar plot for d3 supporting multiple data sets that can be toggled on/off.
+Auditory visualization suite powered by D3
 
-Usage
--------
+Supported visualizations:
 
-
-
-
-Credits
-=============
-
-Built with support from [GN ReSound](http://www.gnresound.com/) via [Tom Kersten](https://tomkersten.github.io). Designed by [Pete Nawara](https://github.com/petebot).
+* Directional polar plot
+* Bar Chart
+* Audiogram (coming soon)
