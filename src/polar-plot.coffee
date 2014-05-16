@@ -137,4 +137,4 @@ renderDirection = (graph, config, radarCallback = ->) ->
     .attr("x2", config.radius - config.axisLineLengthOffset)
     .attr("class", "direction-svg")
 
-window.PolarPlot = PolarPlot
+module.exports = PolarPlot
