@@ -33,7 +33,7 @@ BarChart = (function() {
   };
 
   BarChart.prototype.bar = function(data) {
-    var item, labels, values, x, y;
+    var bars, item, labels, values, x, y;
     values = (function() {
       var _i, _len, _results;
       _results = [];
@@ -63,16 +63,31 @@ BarChart = (function() {
       return x(d) + 100;
     }).attr("y", this.config.height + this.config.labelOffset).attr("dy", -6).text(String);
     this.chart = this.graph.append('g').attr('class', 'chart');
-    this.chart.selectAll("rect").data(values).enter().append("rect").attr("class", function(d, i) {
+    bars = this.chart.selectAll("rect").data(values);
+    bars.enter().append("rect").attr("x", 100).attr("class", function(d, i) {
       return "bar label_" + labels[i];
-    }).attr("x", 100).attr("y", y).attr("height", y.rangeBand()).attr("width", x);
+    }).attr("y", y).attr("height", y.rangeBand()).attr("width", x);
+    bars.exit().remove();
     this.chart.selectAll("line").data(x.ticks(5)).enter().append("line").attr("class", "line").attr("x1", function(d) {
       return x(d) + 100;
     }).attr("x2", function(d) {
       return x(d) + 100;
     }).attr("y1", 0).attr("y2", (y.rangeBand()) * labels.length);
     return {
-      update: function(data) {}
+      update: function(data) {
+        if (data) {
+          values = (function() {
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = data.length; _i < _len; _i++) {
+              item = data[_i];
+              _results.push(item.value);
+            }
+            return _results;
+          })();
+          return bars.data(values).attr("width", x);
+        }
+      }
     };
   };
 
@@ -164,7 +179,7 @@ var EventEmitter, PolarPlot, renderAxis, renderCircles, renderDirection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-EventEmitter = require('./event_emitter');
+EventEmitter = require('./event-emitter');
 
 PolarPlot = (function(_super) {
   __extends(PolarPlot, _super);
@@ -191,6 +206,7 @@ PolarPlot = (function(_super) {
     this.config.paddedWidth = this.config.width - this.config.padding;
     this.config.radius = Math.min(this.config.paddedWidth, this.config.paddedHeight) / 2 - this.config.outerPaddingForAxisLabels;
     this.degreeCallbacks = [];
+    this.datasets = [];
   }
 
   PolarPlot.prototype.draw = function(_arg, radarCallback) {
@@ -226,7 +242,7 @@ PolarPlot = (function(_super) {
               callback = _ref[_i];
               callback(degree);
             }
-            _this.emit('degreeChange');
+            _this.emit('degreeChange', _this.dataAtDegree(degree));
             return "rotate(" + (degree - _this.config.zeroOffset) + ")";
           };
         }).duration(_this.config.radarRotationSpeed);
@@ -236,8 +252,33 @@ PolarPlot = (function(_super) {
     return setInterval(rotate, this.config.radarRotationSpeed);
   };
 
-  PolarPlot.prototype.radial = function(id, data, degreeCallback) {
+  PolarPlot.prototype.dataAtDegree = function(degree) {
+    var i, out, point, set, _i, _j, _len, _len1, _ref, _ref1;
+    out = [];
+    _ref = this.datasets;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      set = _ref[_i];
+      _ref1 = set.data;
+      for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+        point = _ref1[i];
+        if (Math.round(degree) <= point.axis) {
+          out.push({
+            label: set.label,
+            value: set.data[i].value
+          });
+          break;
+        }
+      }
+    }
+    return out;
+  };
+
+  PolarPlot.prototype.radial = function(id, label, data, degreeCallback) {
     var line, radial, wrappedDegreeCallback;
+    this.datasets.push({
+      label: label,
+      data: data
+    });
     wrappedDegreeCallback = function(degree) {
       var foundPoint, i, point, _i, _len;
       for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
@@ -332,4 +373,4 @@ renderDirection = function(graph, config, radarCallback) {
 module.exports = PolarPlot;
 
 
-},{"./event_emitter":3}]},{},[1])
+},{"./event-emitter":3}]},{},[1])

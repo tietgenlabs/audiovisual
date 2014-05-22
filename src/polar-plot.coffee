@@ -22,6 +22,7 @@ class PolarPlot extends EventEmitter
     @config.radius = Math.min(@config.paddedWidth, @config.paddedHeight) / 2 - @config.outerPaddingForAxisLabels
 
     @degreeCallbacks = []
+    @datasets = []
 
   draw: ({ringLabels, axisLabels}, @radarCallback) ->
     values = (label.value for label in ringLabels)
@@ -52,15 +53,27 @@ class PolarPlot extends EventEmitter
           (t) =>
             degree = interpolate(t)
             (callback(degree) for callback in @degreeCallbacks)
-            @emit 'degreeChange'
+            @emit 'degreeChange', @dataAtDegree(degree)
             "rotate(#{degree - @config.zeroOffset})"
         )
         .duration(@config.radarRotationSpeed)
 
     rotate()
+
     setInterval rotate, @config.radarRotationSpeed
 
-  radial: (id, data, degreeCallback) ->
+  dataAtDegree: (degree) ->
+    out = []
+    for set in @datasets
+      for point, i in set.data
+        if Math.round(degree) <= point.axis
+          out.push label: set.label, value: set.data[i].value
+          break
+    out
+
+  radial: (id, label, data, degreeCallback) ->
+    @datasets.push label: label, data: data
+
     # order data
     wrappedDegreeCallback = (degree) ->
       for point, i in data

@@ -148,7 +148,7 @@
           {label: '', axis: 337}
         ]
 
-      radial1000 = polarPlot.radial 'frequency_1000', [
+      radial1000 = polarPlot.radial 'frequency_1000', '1000', [
         {axis: 0, value: 0}
         {axis: 10, value: 1.2}
         {axis: 20, value: 2.0}
@@ -190,7 +190,7 @@
         document.getElementById('degree_1000').innerHTML = Math.round(degree)
         document.getElementById('value_1000').innerHTML = value
 
-      radial4000 = polarPlot.radial 'frequency_4000', [
+      radial4000 = polarPlot.radial 'frequency_4000', '4000', [
         {axis: 0, value: 0}
         {axis: 10, value: 1.5}
         {axis: 20, value: 3.2}
@@ -254,13 +254,13 @@
           {label: '0', value: 0}
           {label: '5', value: 5}
         ]
-      bars = barChart.bar [
+      window.bars = barChart.bar [
         {value: 0, label: 1000}
-        {value: -5, label: 4000}
+        {value: -15, label: 4000}
       ]
 
       polarPlot.on 'degreeChange', (data) ->
-        bars.update data
+        bars.update(data)
 
     </script>
   </body>

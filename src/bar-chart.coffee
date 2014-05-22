@@ -50,16 +50,20 @@ class BarChart
     @chart = @graph.append('g')
       .attr('class', 'chart')
 
-    @chart.selectAll("rect")
-      .data(values)
+    bars = @chart.selectAll("rect").data(values)
+
+    bars
       .enter()
       .append("rect")
-      .attr("class", (d, i) -> "bar label_#{labels[i]}")
       .attr("x", 100)
+      .attr("class", (d, i) -> "bar label_#{labels[i]}")
       .attr("y", y)
       .attr("height", y.rangeBand())
       .attr("width", x)
 
+    bars
+      .exit()
+      .remove()
 
     @chart.selectAll("line")
       .data(x.ticks(5))
@@ -72,7 +76,9 @@ class BarChart
       .attr("y2", (y.rangeBand()) * labels.length)
 
     update: (data) ->
-      # todo
-
+      if data
+        values = (item.value for item in data)
+        bars.data(values)
+          .attr("width", x)
 
 module.exports = BarChart
