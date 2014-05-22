@@ -1,16 +1,178 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 window.AV = {
-  PolarPlot: require('./polar-plot')
+  PolarPlot: require('./polar-plot'),
+  BarChart: require('./bar-chart')
 };
 
 
-},{"./polar-plot":2}],2:[function(require,module,exports){
-var PolarPlot, renderAxis, renderCircles, renderDirection;
+},{"./bar-chart":2,"./polar-plot":4}],2:[function(require,module,exports){
+var BarChart;
 
-PolarPlot = (function() {
+BarChart = (function() {
+  function BarChart(id, options) {
+    var key, value;
+    this.id = id;
+    if (options == null) {
+      options = {};
+    }
+    this.config = {
+      width: 500,
+      height: 100,
+      labelOffset: 20
+    };
+    for (key in options) {
+      value = options[key];
+      this.config[key] = value;
+    }
+  }
+
+  BarChart.prototype.draw = function(_arg) {
+    var axisLabels;
+    axisLabels = _arg.axisLabels;
+    return this.graph = d3.select(this.id).append("svg").attr("class", "bar-chart").attr("width", this.config.width + 120).attr("height", this.config.height + this.config.labelOffset).append("g");
+  };
+
+  BarChart.prototype.bar = function(data) {
+    var item, labels, values, x, y;
+    values = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        item = data[_i];
+        _results.push(item.value);
+      }
+      return _results;
+    })();
+    labels = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        item = data[_i];
+        _results.push(item.label);
+      }
+      return _results;
+    })();
+    x = d3.scale.linear().domain([-20, 5]).range([0, this.config.width]);
+    y = d3.scale.ordinal().domain(values).rangeBands([0, this.config.height]);
+    this.graph.selectAll("text.name").data(labels).enter().append("text").attr("x", 100 / 2).attr("y", function(d, i) {
+      return (i * y.rangeBand()) + y.rangeBand() / 2;
+    }).attr("dy", ".36em").attr("text-anchor", "middle").attr('class', function(d) {
+      return "label label_" + d;
+    }).text(String);
+    this.graph.selectAll(".rule").data(x.ticks(5)).enter().append("text").attr("class", "axis-label").attr("x", function(d) {
+      return x(d) + 100;
+    }).attr("y", this.config.height + this.config.labelOffset).attr("dy", -6).text(String);
+    this.chart = this.graph.append('g').attr('class', 'chart');
+    this.chart.selectAll("rect").data(values).enter().append("rect").attr("class", function(d, i) {
+      return "bar label_" + labels[i];
+    }).attr("x", 100).attr("y", y).attr("height", y.rangeBand()).attr("width", x);
+    this.chart.selectAll("line").data(x.ticks(5)).enter().append("line").attr("class", "line").attr("x1", function(d) {
+      return x(d) + 100;
+    }).attr("x2", function(d) {
+      return x(d) + 100;
+    }).attr("y1", 0).attr("y2", (y.rangeBand()) * labels.length);
+    return {
+      update: function(data) {}
+    };
+  };
+
+  return BarChart;
+
+})();
+
+module.exports = BarChart;
+
+
+},{}],3:[function(require,module,exports){
+var EventEmitter,
+  __slice = [].slice;
+
+EventEmitter = (function() {
+  function EventEmitter() {
+    this.events = {};
+  }
+
+  EventEmitter.prototype.emit = function() {
+    var args, event, listener, _i, _len, _ref;
+    event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    if (!this.events[event]) {
+      return false;
+    }
+    _ref = this.events[event];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      listener = _ref[_i];
+      listener.apply(null, args);
+    }
+    return true;
+  };
+
+  EventEmitter.prototype.addListener = function(event, listener) {
+    var _base;
+    this.emit('newListener', event, listener);
+    ((_base = this.events)[event] != null ? _base[event] : _base[event] = []).push(listener);
+    return this;
+  };
+
+  EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+  EventEmitter.prototype.once = function(event, listener) {
+    var fn;
+    fn = (function(_this) {
+      return function() {
+        _this.removeListener(event, fn);
+        return listener.apply(null, arguments);
+      };
+    })(this);
+    this.on(event, fn);
+    return this;
+  };
+
+  EventEmitter.prototype.removeListener = function(event, listener) {
+    var l;
+    if (!this.events[event]) {
+      return this;
+    }
+    this.events[event] = (function() {
+      var _i, _len, _ref, _results;
+      _ref = this.events[event];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        l = _ref[_i];
+        if (l !== listener) {
+          _results.push(l);
+        }
+      }
+      return _results;
+    }).call(this);
+    return this;
+  };
+
+  EventEmitter.prototype.removeAllListeners = function(event) {
+    delete this.events[event];
+    return this;
+  };
+
+  return EventEmitter;
+
+})();
+
+module.exports = EventEmitter;
+
+
+},{}],4:[function(require,module,exports){
+var EventEmitter, PolarPlot, renderAxis, renderCircles, renderDirection,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('./event_emitter');
+
+PolarPlot = (function(_super) {
+  __extends(PolarPlot, _super);
+
   function PolarPlot(id, options) {
     var key, value;
     this.id = id;
+    PolarPlot.__super__.constructor.call(this);
     this.config = {
       outerPaddingForAxisLabels: 0,
       axisLabelOffsetY: 0,
@@ -64,6 +226,7 @@ PolarPlot = (function() {
               callback = _ref[_i];
               callback(degree);
             }
+            _this.emit('degreeChange');
             return "rotate(" + (degree - _this.config.zeroOffset) + ")";
           };
         }).duration(_this.config.radarRotationSpeed);
@@ -111,7 +274,7 @@ PolarPlot = (function() {
 
   return PolarPlot;
 
-})();
+})(EventEmitter);
 
 renderCircles = function(graph, labels, config, customRadius) {
   var levels;
@@ -169,4 +332,4 @@ renderDirection = function(graph, config, radarCallback) {
 module.exports = PolarPlot;
 
 
-},{}]},{},[1])
+},{"./event_emitter":3}]},{},[1])

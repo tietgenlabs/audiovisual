@@ -36,17 +36,37 @@
         stroke-width: 3px;
         z-index: 1;
       }
-      #frequency_1000 {
+      #frequency_1000,
+      .freq_1000 {
         fill: #4D90FE;
         fill-opacity: 0.3;
         stroke: #4D90FE;
         stroke-width: 1px;
       }
-      #frequency_4000 {
+      #frequency_4000,
+      .freq_4000 {
         fill: #CB4437;
         fill-opacity: 0.3;
         stroke: #CB4437;
         stroke-width: 1px;
+      }
+      .bar-chart .label_4000 {
+        fill: #CB4437;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .label_1000 {
+        fill: #4D90FE;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .line {
+        stroke: #CCC;
+      }
+      .bar-chart .axis-label {
+        font-size: 14px;
+        text-anchor: middle;
+      }
+      .bar-chart .chart {
+        stroke: #CCC;
       }
       ul {
         margin-bottom: -80px;
@@ -89,6 +109,8 @@
       </li>
     </ul>
     <div id="plot"></div>
+    <div id="bar"></div>
+    <br />
     <script type="text/coffeescript">
       polarPlot = new AV.PolarPlot '#plot',
         circleLabelOffsetY: -5
@@ -221,6 +243,24 @@
 
       document.getElementById("fre_1000").addEventListener 'click', (ev) -> listerner(ev, radial1000)
       document.getElementById("fre_4000").addEventListener 'click', (ev) -> listerner(ev, radial4000)
+
+      barChart = new AV.BarChart('#bar')
+      barChart.draw
+        axisLabel: [
+          {label: '-20', value: -20}
+          {label: '-15', value: -15}
+          {label: '-10', value: -10}
+          {label: '-5', value: -5}
+          {label: '0', value: 0}
+          {label: '5', value: 5}
+        ]
+      bars = barChart.bar [
+        {value: 0, label: 1000}
+        {value: -5, label: 4000}
+      ]
+
+      polarPlot.on 'degreeChange', (data) ->
+        bars.update data
 
     </script>
   </body>

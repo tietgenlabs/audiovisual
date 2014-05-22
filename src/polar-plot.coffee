@@ -1,5 +1,9 @@
-class PolarPlot
+EventEmitter = require './event-emitter'
+
+class PolarPlot extends EventEmitter
   constructor: (@id, options) ->
+    super()
+
     @config =
       outerPaddingForAxisLabels: 0
       axisLabelOffsetY: 0
@@ -48,6 +52,7 @@ class PolarPlot
           (t) =>
             degree = interpolate(t)
             (callback(degree) for callback in @degreeCallbacks)
+            @emit 'degreeChange'
             "rotate(#{degree - @config.zeroOffset})"
         )
         .duration(@config.radarRotationSpeed)
