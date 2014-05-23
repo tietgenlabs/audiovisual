@@ -1,88 +1,11 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 window.AV = {
   PolarPlot: require('./polar-plot'),
-  BarChart: require('./bar-chart')
+  HorizontalBarChart: require('./horizontal-bar-chart')
 };
 
 
-},{"./bar-chart":2,"./polar-plot":4}],2:[function(require,module,exports){
-var BarChart;
-
-BarChart = (function() {
-  function BarChart(id, options) {
-    var key, value;
-    this.id = id;
-    if (options == null) {
-      options = {};
-    }
-    this.config = {
-      width: 500,
-      height: 100,
-      xLabelOffset: 30,
-      yLabelOffset: 100,
-      maxValue: 5,
-      minValue: -20,
-      labelTicks: 5
-    };
-    for (key in options) {
-      value = options[key];
-      this.config[key] = value;
-    }
-  }
-
-  BarChart.prototype.draw = function(yAxisLabels) {
-    this.yAxisLabels = yAxisLabels;
-    this.graph = d3.select(this.id).append("svg").attr("class", "bar-chart").attr("width", this.config.width + 120).attr("height", this.config.height + this.config.xLabelOffset).append("g");
-    this.xFunc = d3.scale.linear().domain([this.config.minValue, this.config.maxValue]).range([0, this.config.width]);
-    this.yFunc = d3.scale.ordinal().domain(this.yAxisLabels).rangeBands([0, this.config.height]);
-    this.graph.selectAll("text.name").data(this.yAxisLabels).enter().append("text").attr("x", this.config.yLabelOffset / 2).attr("y", (function(_this) {
-      return function(d, i) {
-        return (i * _this.yFunc.rangeBand()) + _this.yFunc.rangeBand() / 2;
-      };
-    })(this)).attr("dy", ".36em").attr("text-anchor", "middle").attr('class', function(d) {
-      return "label label_" + d;
-    }).text(String);
-    this.graph.selectAll(".rule").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("text").attr("class", "axis-label").attr("x", (function(_this) {
-      return function(d) {
-        return _this.xFunc(d) + _this.config.yLabelOffset;
-      };
-    })(this)).attr("y", this.config.height + this.config.xLabelOffset).attr("dy", -6).text(String);
-    return this.graph.selectAll("line").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("line").attr("class", "line").attr("x1", (function(_this) {
-      return function(d) {
-        return _this.xFunc(d) + _this.config.yLabelOffset;
-      };
-    })(this)).attr("x2", (function(_this) {
-      return function(d) {
-        return _this.xFunc(d) + _this.config.yLabelOffset;
-      };
-    })(this)).attr("y1", 0).attr("y2", this.config.height);
-  };
-
-  BarChart.prototype.bars = function(data) {
-    var bars;
-    this.yFunc = d3.scale.ordinal().domain(data).rangeBands([0, this.config.height]);
-    bars = this.graph.selectAll("rect").data(data).enter().append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
-      return function(d, i) {
-        return "bar label_" + _this.yAxisLabels[i];
-      };
-    })(this)).attr("y", this.yFunc).attr("height", this.yFunc.rangeBand()).attr("width", this.xFunc);
-    return {
-      update: (function(_this) {
-        return function(data) {
-          return bars.data(data).attr("width", _this.xFunc);
-        };
-      })(this)
-    };
-  };
-
-  return BarChart;
-
-})();
-
-module.exports = BarChart;
-
-
-},{}],3:[function(require,module,exports){
+},{"./horizontal-bar-chart":3,"./polar-plot":4}],2:[function(require,module,exports){
 var EventEmitter,
   __slice = [].slice;
 
@@ -156,6 +79,83 @@ EventEmitter = (function() {
 })();
 
 module.exports = EventEmitter;
+
+
+},{}],3:[function(require,module,exports){
+var HorizontalBarChart;
+
+HorizontalBarChart = (function() {
+  function HorizontalBarChart(id, options) {
+    var key, value;
+    this.id = id;
+    if (options == null) {
+      options = {};
+    }
+    this.config = {
+      width: 500,
+      height: 100,
+      xLabelOffset: 30,
+      yLabelOffset: 100,
+      maxValue: 5,
+      minValue: -20,
+      labelTicks: 5
+    };
+    for (key in options) {
+      value = options[key];
+      this.config[key] = value;
+    }
+  }
+
+  HorizontalBarChart.prototype.draw = function(yAxisLabels) {
+    this.yAxisLabels = yAxisLabels;
+    this.graph = d3.select(this.id).append("svg").attr("class", "bar-chart").attr("width", this.config.width + 120).attr("height", this.config.height + this.config.xLabelOffset).append("g");
+    this.xFunc = d3.scale.linear().domain([this.config.minValue, this.config.maxValue]).range([0, this.config.width]);
+    this.yFunc = d3.scale.ordinal().domain(this.yAxisLabels).rangeBands([0, this.config.height]);
+    this.graph.selectAll("text.name").data(this.yAxisLabels).enter().append("text").attr("x", this.config.yLabelOffset / 2).attr("y", (function(_this) {
+      return function(d, i) {
+        return (i * _this.yFunc.rangeBand()) + _this.yFunc.rangeBand() / 2;
+      };
+    })(this)).attr("dy", ".36em").attr("text-anchor", "middle").attr('class', function(d) {
+      return "label label_" + d;
+    }).text(String);
+    this.graph.selectAll(".rule").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("text").attr("class", "axis-label").attr("x", (function(_this) {
+      return function(d) {
+        return _this.xFunc(d) + _this.config.yLabelOffset;
+      };
+    })(this)).attr("y", this.config.height + this.config.xLabelOffset).attr("dy", -6).text(String);
+    return this.graph.selectAll("line").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("line").attr("class", "line").attr("x1", (function(_this) {
+      return function(d) {
+        return _this.xFunc(d) + _this.config.yLabelOffset;
+      };
+    })(this)).attr("x2", (function(_this) {
+      return function(d) {
+        return _this.xFunc(d) + _this.config.yLabelOffset;
+      };
+    })(this)).attr("y1", 0).attr("y2", this.config.height);
+  };
+
+  HorizontalBarChart.prototype.bars = function(data) {
+    var bars;
+    this.yFunc = d3.scale.ordinal().domain(data).rangeBands([0, this.config.height]);
+    bars = this.graph.selectAll("rect").data(data).enter().append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
+      return function(d, i) {
+        return "bar label_" + _this.yAxisLabels[i];
+      };
+    })(this)).attr("y", this.yFunc).attr("height", this.yFunc.rangeBand()).attr("width", this.xFunc);
+    return {
+      update: (function(_this) {
+        return function(data) {
+          return bars.data(data).attr("width", _this.xFunc);
+        };
+      })(this)
+    };
+  };
+
+  return HorizontalBarChart;
+
+})();
+
+module.exports = HorizontalBarChart;
 
 
 },{}],4:[function(require,module,exports){
@@ -364,4 +364,4 @@ renderDirection = function(graph, config, radarCallback) {
 module.exports = PolarPlot;
 
 
-},{"./event-emitter":3}]},{},[1])
+},{"./event-emitter":2}]},{},[1])

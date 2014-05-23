@@ -1,4 +1,4 @@
-class BarChart
+class HorizontalBarChart
   constructor: (@id, options = {}) ->
     @config =
       width: 500
@@ -75,4 +75,4 @@ class BarChart
     update: (data) =>
       bars.data(data).attr("width", @xFunc)
 
-module.exports = BarChart
+module.exports = HorizontalBarChart

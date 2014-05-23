@@ -1,3 +1,3 @@
 window.AV =
   PolarPlot: require('./polar-plot')
-  BarChart: require('./bar-chart')
+  HorizontalBarChart: require('./horizontal-bar-chart')
