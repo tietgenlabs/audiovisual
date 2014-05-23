@@ -62,8 +62,10 @@ class PolarPlot extends EventEmitter
             (t) =>
               degree = interpolate(t)
               (callback(degree) for callback in @degreeCallbacks)
+
               dataAtDegree = @dataAtDegree(degree)
-              @emit 'degreeChange', dataAtDegree
+              @emit 'degreeChange', dataAtDegree, 80 # how do you get 80??!
+
               "rotate(#{degree - @config.zeroOffset})"
           )
           .duration(@config.radarRotationSpeed)
@@ -100,11 +102,13 @@ class PolarPlot extends EventEmitter
       if pointMarker? && foundPoint.value
         pointMarker
           .data([{value: foundPoint.value, axis: degree}])
-          .attr("cy", (d) => @customRadius(d.value))
           .attr("r", 5)
           .attr("transform", =>
             "rotate(#{degree + (@config.zeroOffset * 2)})"
           )
+          .transition()
+          .duration(80) # why 80?!
+          .attr("cy", (d) => @customRadius(d.value))
 
     @degreeCallbacks.push wrappedDegreeCallback
 

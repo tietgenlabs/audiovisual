@@ -225,10 +225,10 @@
       barChart.draw ['1000', '4000']
       window.bars = barChart.bars [-10, -15]
 
-      polarPlot.on 'degreeChange', (data) ->
+      polarPlot.on 'degreeChange', (data, duration) ->
         values = for item in data
           if item.visible then item.value else -20
-        bars.update(values)
+        bars.update(values, duration)
     </script>
   </body>
 </html>

@@ -72,7 +72,10 @@ class HorizontalBarChart
       .attr("height", @yFunc.rangeBand())
       .attr("width", @xFunc)
 
-    update: (data) =>
-      bars.data(data).attr("width", @xFunc)
+    update: (data, duration) =>
+      bars.data(data)
+        .transition()
+        .duration(duration)
+        .attr("width", @xFunc)
 
 module.exports = HorizontalBarChart

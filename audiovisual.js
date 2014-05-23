@@ -144,8 +144,8 @@ HorizontalBarChart = (function() {
     })(this)).attr("y", this.yFunc).attr("height", this.yFunc.rangeBand()).attr("width", this.xFunc);
     return {
       update: (function(_this) {
-        return function(data) {
-          return bars.data(data).attr("width", _this.xFunc);
+        return function(data, duration) {
+          return bars.data(data).transition().duration(duration).attr("width", _this.xFunc);
         };
       })(this)
     };
@@ -235,7 +235,7 @@ PolarPlot = (function(_super) {
                 callback(degree);
               }
               dataAtDegree = _this.dataAtDegree(degree);
-              _this.emit('degreeChange', dataAtDegree);
+              _this.emit('degreeChange', dataAtDegree, 80);
               return "rotate(" + (degree - _this.config.zeroOffset) + ")";
             };
           }).duration(_this.config.radarRotationSpeed);
@@ -295,10 +295,10 @@ PolarPlot = (function(_super) {
               value: foundPoint.value,
               axis: degree
             }
-          ]).attr("cy", function(d) {
-            return _this.customRadius(d.value);
-          }).attr("r", 5).attr("transform", function() {
+          ]).attr("r", 5).attr("transform", function() {
             return "rotate(" + (degree + (_this.config.zeroOffset * 2)) + ")";
+          }).transition().duration(80).attr("cy", function(d) {
+            return _this.customRadius(d.value);
           });
         }
       };
