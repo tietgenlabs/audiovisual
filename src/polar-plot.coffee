@@ -13,6 +13,9 @@ class PolarPlot extends EventEmitter
       radarRotationSpeed: 10000
       width: 500
       height: 500
+      directionalLine: true
+      directionalRotation: true
+      directionLineDegree: 0
 
     (@config[key] = value for key, value of options)
 
@@ -42,25 +45,30 @@ class PolarPlot extends EventEmitter
       .attr("transform", "translate(#{@config.width / 2}, #{@config.height / 2})")
 
     renderCircles(@graph, ringLabels, @config, @customRadius)
-    renderAxis(@graph, axisLabels, @config)
-    direction = renderDirection(@graph, @config)
+    renderRadialAxis(@graph, axisLabels, @config)
+    renderRingAxis(@graph, ringLabels, @config, @customRadius)
+    @radialGroup = @graph.append("g")
 
-    rotate = =>
-      direction
-        .transition()
-        .ease("linear")
-        .attrTween("transform", (d, i) =>
-          interpolate = d3.interpolate(0, 360)
-          (t) =>
-            degree = interpolate(t)
-            (callback(degree) for callback in @degreeCallbacks)
-            @emit 'degreeChange', @dataAtDegree(degree)
-            "rotate(#{degree - @config.zeroOffset})"
-        )
-        .duration(@config.radarRotationSpeed)
+    if @config.directionalLine
+      direction = renderDirection(@graph, @config)
 
-    rotate()
-    setInterval rotate, @config.radarRotationSpeed
+    if @config.directionalRotation
+      rotate = =>
+        direction
+          .transition()
+          .ease("linear")
+          .attrTween("transform", (d, i) =>
+            interpolate = d3.interpolate(0, 360)
+            (t) =>
+              degree = interpolate(t)
+              (callback(degree) for callback in @degreeCallbacks)
+              @emit 'degreeChange', @dataAtDegree(degree)
+              "rotate(#{degree - @config.zeroOffset})"
+          )
+          .duration(@config.radarRotationSpeed)
+
+      rotate()
+      setInterval rotate, @config.radarRotationSpeed
 
   dataAtDegree: (degree) ->
     out = []
@@ -96,7 +104,7 @@ class PolarPlot extends EventEmitter
     radial = null
 
     render: =>
-      radial = @graph.append("path")
+      radial = @radialGroup.append("path")
         .datum(data)
         .attr("class", "radial")
         .attr("id", id)
@@ -116,20 +124,14 @@ renderCircles = (graph, labels, config, customRadius) ->
   levels.append("circle")
     .attr("r", (d) -> customRadius(d.value))
     .attr("class", (d, i) ->
-      classNames = "ring"
+      classNames = "ring ring_#{i + 1}"
       classNames += " last-child" if (i + 1) == labels.length
+      classNames += " first-child" if i == 0
       classNames
     )
-    .style("fill", (d) -> d.fill)
-    .style("fill-opacity", (d) -> d.opacity)
+    .style("fill-opacity", (d, i) -> (labels.length - i) / labels.length)
 
-  levels.append("svg:text")
-    .attr("x", config.circleLabelOffsetX)
-    .attr("y", (d) -> -customRadius(d.value) - config.circleLabelOffsetY)
-    .attr("class", "ring-label")
-    .text((d) -> d.label)
-
-renderAxis = (graph, labels, config) ->
+renderRadialAxis = (graph, labels, config) ->
   axis = graph.selectAll(".axis")
     .data(labels)
     .enter()
@@ -155,9 +157,22 @@ renderAxis = (graph, labels, config) ->
       d.label
     )
 
+renderRingAxis = (graph, labels, config, customRadius) ->
+  graph.selectAll(".ring-label")
+    .data(labels)
+    .enter()
+    .append("text")
+    .attr("x", config.circleLabelOffsetX)
+    .attr("y", (d) -> -customRadius(d.value) - config.circleLabelOffsetY)
+    .attr("class", "ring-label")
+    .text((d) -> d.label)
+
 renderDirection = (graph, config, radarCallback = ->) ->
   graph.append("line")
     .attr("x2", config.radius - config.axisLineLengthOffset)
     .attr("class", "direction")
+    .attr("transform", ->
+      "rotate(#{config.directionLineDegree - config.zeroOffset})"
+    )
 
 module.exports = PolarPlot
