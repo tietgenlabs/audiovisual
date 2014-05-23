@@ -144,8 +144,8 @@ HorizontalBarChart = (function() {
     })(this)).attr("y", this.yFunc).attr("height", this.yFunc.rangeBand()).attr("width", this.xFunc);
     return {
       update: (function(_this) {
-        return function(data) {
-          return bars.data(data).attr("width", _this.xFunc);
+        return function(data, duration) {
+          return bars.data(data).transition().duration(duration).attr("width", _this.xFunc);
         };
       })(this)
     };
@@ -159,7 +159,7 @@ module.exports = HorizontalBarChart;
 
 
 },{}],4:[function(require,module,exports){
-var EventEmitter, PolarPlot, renderAxis, renderCircles, renderDirection,
+var EventEmitter, PolarPlot, renderCircles, renderDirection, renderRadialAxis, renderRingAxis,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -180,7 +180,10 @@ PolarPlot = (function(_super) {
       radialInpolation: 'basis',
       radarRotationSpeed: 10000,
       width: 500,
-      height: 500
+      height: 500,
+      directionalLine: true,
+      directionalRotation: true,
+      directionLineDegree: 0
     };
     for (key in options) {
       value = options[key];
@@ -209,31 +212,38 @@ PolarPlot = (function(_super) {
     minRingValue = Math.min.apply(Math, values);
     maxRingValue = Math.max.apply(Math, values);
     this.customRadius = d3.scale.linear().domain([minRingValue, maxRingValue]).range([0, this.config.radius]);
-    this.graph = d3.select(this.id).append("svg").attr("width", this.config.width).attr("height", this.config.height).append("g").attr("transform", "translate(" + (this.config.width / 2) + ", " + (this.config.height / 2) + ")");
+    this.graph = d3.select(this.id).append("svg").attr("width", this.config.width).attr("height", this.config.height).attr("class", "polar-plot").append("g").attr("transform", "translate(" + (this.config.width / 2) + ", " + (this.config.height / 2) + ")");
     renderCircles(this.graph, ringLabels, this.config, this.customRadius);
-    renderAxis(this.graph, axisLabels, this.config);
-    direction = renderDirection(this.graph, this.config);
-    rotate = (function(_this) {
-      return function() {
-        return direction.transition().ease("linear").attrTween("transform", function(d, i) {
-          var interpolate;
-          interpolate = d3.interpolate(0, 360);
-          return function(t) {
-            var callback, degree, _i, _len, _ref;
-            degree = interpolate(t);
-            _ref = _this.degreeCallbacks;
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              callback = _ref[_i];
-              callback(degree);
-            }
-            _this.emit('degreeChange', _this.dataAtDegree(degree));
-            return "rotate(" + (degree - _this.config.zeroOffset) + ")";
-          };
-        }).duration(_this.config.radarRotationSpeed);
-      };
-    })(this);
-    rotate();
-    return setInterval(rotate, this.config.radarRotationSpeed);
+    renderRadialAxis(this.graph, axisLabels, this.config);
+    renderRingAxis(this.graph, ringLabels, this.config, this.customRadius);
+    this.radialsGroup = this.graph.append("g");
+    if (this.config.directionalLine) {
+      direction = renderDirection(this.graph, this.config);
+    }
+    if (this.config.directionalRotation) {
+      rotate = (function(_this) {
+        return function() {
+          return direction.transition().ease("linear").attrTween("transform", function(d, i) {
+            var interpolate;
+            interpolate = d3.interpolate(0, 360);
+            return function(t) {
+              var callback, dataAtDegree, degree, _i, _len, _ref;
+              degree = interpolate(t);
+              _ref = _this.degreeCallbacks;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                callback = _ref[_i];
+                callback(degree);
+              }
+              dataAtDegree = _this.dataAtDegree(degree);
+              _this.emit('degreeChange', dataAtDegree, 80);
+              return "rotate(" + (degree - _this.config.zeroOffset) + ")";
+            };
+          }).duration(_this.config.radarRotationSpeed);
+        };
+      })(this);
+      rotate();
+      return setInterval(rotate, this.config.radarRotationSpeed);
+    }
   };
 
   PolarPlot.prototype.dataAtDegree = function(degree) {
@@ -259,24 +269,40 @@ PolarPlot = (function(_super) {
   };
 
   PolarPlot.prototype.radial = function(_arg, degreeCallback) {
-    var data, datasetIndex, id, label, line, radial, wrappedDegreeCallback;
+    var data, datasetIndex, id, label, line, pointMarker, radial, radialGroup, wrappedDegreeCallback;
     id = _arg.id, label = _arg.label, data = _arg.data;
     datasetIndex = this.datasets.push({
       label: label,
       data: data
     });
     datasetIndex--;
-    wrappedDegreeCallback = function(degree) {
-      var foundPoint, i, point, _i, _len;
-      for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
-        point = data[i];
-        if (Math.round(degree) <= point.axis) {
-          foundPoint = data[i];
-          break;
+    radial = null;
+    pointMarker = null;
+    wrappedDegreeCallback = (function(_this) {
+      return function(degree) {
+        var foundPoint, i, point, _i, _len;
+        for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
+          point = data[i];
+          if (Math.round(degree) <= point.axis) {
+            foundPoint = data[i];
+            break;
+          }
         }
-      }
-      return degreeCallback(degree, foundPoint != null ? foundPoint.value : void 0);
-    };
+        degreeCallback(degree, foundPoint != null ? foundPoint.value : void 0);
+        if ((pointMarker != null) && foundPoint.value) {
+          return pointMarker.data([
+            {
+              value: foundPoint.value,
+              axis: degree
+            }
+          ]).attr("r", 5).attr("transform", function() {
+            return "rotate(" + (degree + (_this.config.zeroOffset * 2)) + ")";
+          }).transition().duration(80).attr("cy", function(d) {
+            return _this.customRadius(d.value);
+          });
+        }
+      };
+    })(this);
     this.degreeCallbacks.push(wrappedDegreeCallback);
     line = d3.svg.line.radial().radius((function(_this) {
       return function(d) {
@@ -287,11 +313,17 @@ PolarPlot = (function(_super) {
         return d.axis * (Math.PI / 180);
       };
     })(this)).interpolate(this.config.radialInpolation);
-    radial = null;
+    radialGroup = this.radialsGroup.append("g");
     return {
       render: (function(_this) {
         return function() {
-          radial = _this.graph.append("path").datum(data).attr("class", "radial").attr("id", id).attr("d", line);
+          radial = radialGroup.append("path").datum(data).attr("class", "radial radial_" + label).attr("id", id).attr("d", line);
+          pointMarker = radialGroup.selectAll("circle.point").data([
+            {
+              value: 0,
+              axis: 45
+            }
+          ]).enter().append("circle").attr("class", "point point_" + label);
           return _this.datasets[datasetIndex].visible = true;
         };
       })(this),
@@ -311,36 +343,32 @@ PolarPlot = (function(_super) {
 renderCircles = function(graph, labels, config, customRadius) {
   var levels;
   levels = graph.selectAll(".levels").data(labels).enter().append("g");
-  levels.append("circle").attr("r", function(d) {
+  return levels.append("circle").attr("r", function(d) {
     return customRadius(d.value);
   }).attr("class", function(d, i) {
     var classNames;
-    classNames = "ring-svg";
+    classNames = "ring ring_" + (i + 1);
     if ((i + 1) === labels.length) {
       classNames += " last-child";
     }
+    if (i === 0) {
+      classNames += " first-child";
+    }
     return classNames;
-  }).style("fill", function(d) {
-    return d.fill;
-  }).style("fill-opacity", function(d) {
-    return d.opacity;
-  });
-  return levels.append("svg:text").attr("x", config.circleLabelOffsetX).attr("y", function(d) {
-    return -customRadius(d.value) - config.circleLabelOffsetY;
-  }).attr("class", "ring-label-svg").text(function(d) {
-    return d.label;
+  }).style("fill-opacity", function(d, i) {
+    return (labels.length - i) / labels.length;
   });
 };
 
-renderAxis = function(graph, labels, config) {
+renderRadialAxis = function(graph, labels, config) {
   var axis;
   axis = graph.selectAll(".axis").data(labels).enter().append("g").attr("transform", (function(_this) {
     return function(d) {
       return "rotate(" + (d.axis - config.zeroOffset) + ")";
     };
   })(this));
-  axis.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "axis-svg");
-  return axis.append("text").attr("x", config.radius).attr("dy", ".35em").attr("class", "axis-label-svg").attr("transform", (function(_this) {
+  axis.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "axis");
+  return axis.append("text").attr("x", config.radius).attr("dy", ".35em").attr("class", "axis-label").attr("transform", (function(_this) {
     return function(d) {
       var rotate, translate;
       translate = "translate(" + config.axisLabelOffsetX + ", " + config.axisLabelOffsetY + ")";
@@ -354,11 +382,21 @@ renderAxis = function(graph, labels, config) {
   })(this));
 };
 
+renderRingAxis = function(graph, labels, config, customRadius) {
+  return graph.selectAll(".ring-label").data(labels).enter().append("text").attr("x", config.circleLabelOffsetX).attr("y", function(d) {
+    return -customRadius(d.value) - config.circleLabelOffsetY;
+  }).attr("class", "ring-label").text(function(d) {
+    return d.label;
+  });
+};
+
 renderDirection = function(graph, config, radarCallback) {
   if (radarCallback == null) {
     radarCallback = function() {};
   }
-  return graph.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "direction-svg");
+  return graph.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "direction").attr("transform", function() {
+    return "rotate(" + (config.directionLineDegree - config.zeroOffset) + ")";
+  });
 };
 
 module.exports = PolarPlot;

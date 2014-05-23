@@ -1,0 +1,50 @@
+/* Directional polar plot
+ * -------------------------------------- */
+svg.polar-plot .ring-label {
+  font-size: 14px;
+  text-anchor: middle;
+  z-index: 10;
+  fill: #999;
+  font-weight: bold;
+}
+svg.polar-plot .ring {
+  fill: #CCC;
+}
+svg.polar-plot .ring.last-child {
+  stroke: #CCC;
+}
+svg.polar-plot .axis {
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1px;
+  z-index: 1;
+}
+svg.polar-plot .axis-label {
+  font-size: 15px;
+  text-anchor: middle;
+  fill: #999;
+}
+svg.polar-plot .direction {
+  stroke: yellow;
+  stroke-width: 3px;
+}
+svg.polar-plot .radial {
+  stroke-width: 3px;
+  fill-opacity: 0.3;
+}
+svg.polar-plot .point {
+  stroke-width: 2px;
+  fill: #FFF;
+}
+
+/* Horizontal bar chart
+ * -------------------------------------- */
+svg.bar-chart .line {
+  stroke: #CCC;
+}
+svg.bar-chart .axis-label {
+  font-size: 14px;
+  text-anchor: middle;
+}
+svg.bar-chart .chart {
+  stroke: #CCC;
+}
