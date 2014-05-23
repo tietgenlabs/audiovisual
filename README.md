@@ -39,12 +39,12 @@ Default config options...
   # Draw the radial plot with labels
   polarPlot.draw
     ringLabels: [
-      {label: '', value: -25, fill: '#AAA', opacity: 1}
-      {label: '-15', value: -15, fill: '#AAA', opacity: 1}
-      {label: '-10', value: -10, fill: '#AAA', opacity: 0.4}
-      {label: '-5', value: -5, fill: '#AAA', opacity: 0.3}
-      {label: '0', value: 0, fill: '#AAA', opacity: 0.2}
-      {label: '5', value: 5, fill: '#AAA', opacity: 0.1}
+      {label: '', value: -25}
+      {label: '-15', value: -15}
+      {label: '-10', value: -10}
+      {label: '-5', value: -5}
+      {label: '0', value: 0}
+      {label: '5', value: 5}
     ]
     axisLabels: [
       {label: '0', axis: 0}
@@ -89,8 +89,9 @@ Default config options...
   # Remove the dataset from the radial
   radial.remove()
 
-  polarPlot.on 'degreeChange', (dataAtDegree) ->
+  polarPlot.on 'degreeChange', (dataAtDegree, duration) ->
     # event fired on degree change. This is constantly fired
+    # duration: recommended duration for an animation
 ```
 
 Horizontal Bar chart
