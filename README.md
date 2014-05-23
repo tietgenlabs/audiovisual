@@ -36,6 +36,7 @@ Default config options...
     axisLabelRotationOffset: 90
     outerPaddingForAxisLabels: 20
 
+  # Draw the radial plot with labels
   polarPlot.draw
     ringLabels: [
       {label: '', value: -25, fill: '#AAA', opacity: 1}
@@ -63,6 +64,33 @@ Default config options...
       {label: '315', axis: 315}
       {label: '', axis: 337}
     ]
+
+  # Plot a dataset
+  radial = polarPlot.radial
+    id: 'frequency_4000'
+    label: '4000'
+    data: [
+      {axis: 0, value: 0}
+      {axis: 10, value: 1.5}
+      {axis: 20, value: 3.2}
+      {axis: 30, value: 4.6}
+      {axis: 40, value: 4.5}
+      {axis: 50, value: 2.6}
+      ...
+      {axis: 340, value: -4.3}
+      {axis: 350, value: -2.0}
+      {axis: 360, value: 0}
+    ], (degree, value) ->
+      # Callback at the degree indicator rotates
+
+  # Show render the dataset on the radial
+  radial.render()
+
+  # Remove the dataset from the radial
+  radial.remove()
+
+  polarPlot.on 'degreeChange', (dataAtDegree) ->
+    # event fired on degree change. This is constantly fired
 ```
 
 Horizontal Bar chart
