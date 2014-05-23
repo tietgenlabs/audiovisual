@@ -148,89 +148,95 @@
           {label: '', axis: 337}
         ]
 
-      radial1000 = polarPlot.radial 'frequency_1000', '1000', [
-        {axis: 0, value: 0}
-        {axis: 10, value: 1.2}
-        {axis: 20, value: 2.0}
-        {axis: 30, value: 2.4}
-        {axis: 40, value: 3.2}
-        {axis: 50, value: 3.7}
-        {axis: 60, value: 3.9}
-        {axis: 70, value: 4.2}
-        {axis: 80, value: 4.3}
-        {axis: 90, value: 4.1}
-        {axis: 100, value: 4.2}
-        {axis: 110, value: 4.0}
-        {axis: 120, value: 4.0}
-        {axis: 130, value: 3.7}
-        {axis: 140, value: 3.5}
-        {axis: 150, value: 3.2}
-        {axis: 160, value: 2.8}
-        {axis: 170, value: 2.2}
-        {axis: 180, value: 1.4}
-        {axis: 190, value: 0.2}
-        {axis: 200, value: -1.2}
-        {axis: 210, value: -2.7}
-        {axis: 220, value: -4.1}
-        {axis: 230, value: -4.3}
-        {axis: 240, value: -3.5}
-        {axis: 250, value: -2.5}
-        {axis: 260, value: -1.4}
-        {axis: 270, value: -1.2}
-        {axis: 280, value: -0.9}
-        {axis: 290, value: -1.7}
-        {axis: 300, value: -2.4}
-        {axis: 310, value: -3.6}
-        {axis: 320, value: -4.1}
-        {axis: 330, value: -3.5}
-        {axis: 340, value: -2.6}
-        {axis: 350, value: -1.2}
-        {axis: 360, value: 0}
-      ], (degree, value) ->
-        document.getElementById('degree_1000').innerHTML = Math.round(degree)
-        document.getElementById('value_1000').innerHTML = value
+      radial1000 = polarPlot.radial
+        id: 'frequency_1000'
+        label: '1000',
+        data: [
+          {axis: 0, value: 0}
+          {axis: 10, value: 1.2}
+          {axis: 20, value: 2.0}
+          {axis: 30, value: 2.4}
+          {axis: 40, value: 3.2}
+          {axis: 50, value: 3.7}
+          {axis: 60, value: 3.9}
+          {axis: 70, value: 4.2}
+          {axis: 80, value: 4.3}
+          {axis: 90, value: 4.1}
+          {axis: 100, value: 4.2}
+          {axis: 110, value: 4.0}
+          {axis: 120, value: 4.0}
+          {axis: 130, value: 3.7}
+          {axis: 140, value: 3.5}
+          {axis: 150, value: 3.2}
+          {axis: 160, value: 2.8}
+          {axis: 170, value: 2.2}
+          {axis: 180, value: 1.4}
+          {axis: 190, value: 0.2}
+          {axis: 200, value: -1.2}
+          {axis: 210, value: -2.7}
+          {axis: 220, value: -4.1}
+          {axis: 230, value: -4.3}
+          {axis: 240, value: -3.5}
+          {axis: 250, value: -2.5}
+          {axis: 260, value: -1.4}
+          {axis: 270, value: -1.2}
+          {axis: 280, value: -0.9}
+          {axis: 290, value: -1.7}
+          {axis: 300, value: -2.4}
+          {axis: 310, value: -3.6}
+          {axis: 320, value: -4.1}
+          {axis: 330, value: -3.5}
+          {axis: 340, value: -2.6}
+          {axis: 350, value: -1.2}
+          {axis: 360, value: 0}
+        ], (degree, value) ->
+          document.getElementById('degree_1000').innerHTML = Math.round(degree)
+          document.getElementById('value_1000').innerHTML = value
 
-      radial4000 = polarPlot.radial 'frequency_4000', '4000', [
-        {axis: 0, value: 0}
-        {axis: 10, value: 1.5}
-        {axis: 20, value: 3.2}
-        {axis: 30, value: 4.6}
-        {axis: 40, value: 4.5}
-        {axis: 50, value: 2.6}
-        {axis: 60, value: 0.5}
-        {axis: 70, value: -0.4}
-        {axis: 80, value: -1.1}
-        {axis: 90, value: -2.6}
-        {axis: 100, value: -3.7}
-        {axis: 110, value: -3.5}
-        {axis: 120, value: -2.3}
-        {axis: 130, value: -1.1}
-        {axis: 140, value: -0.6}
-        {axis: 150, value: -0.6}
-        {axis: 160, value: -0.7}
-        {axis: 170, value: -1.4}
-        {axis: 180, value: -3.1}
-        {axis: 190, value: -3.9}
-        {axis: 200, value: -5.0}
-        {axis: 210, value: -7.4}
-        {axis: 220, value: -7.5}
-        {axis: 230, value: -11.5}
-        {axis: 240, value: -13.4}
-        {axis: 250, value: -9.6}
-        {axis: 260, value: -13.7}
-        {axis: 270, value: -12.4}
-        {axis: 280, value: -14.0}
-        {axis: 290, value: -11.6}
-        {axis: 300, value: -8.7}
-        {axis: 310, value: -8.8}
-        {axis: 320, value: -7.4}
-        {axis: 330, value: -6.3}
-        {axis: 340, value: -4.3}
-        {axis: 350, value: -2.0}
-        {axis: 360, value: 0}
-      ], (degree, value) ->
-        document.getElementById('degree_4000').innerHTML = Math.round(degree)
-        document.getElementById('value_4000').innerHTML = value
+      radial4000 = polarPlot.radial
+        id: 'frequency_4000'
+        label: '4000'
+        data: [
+          {axis: 0, value: 0}
+          {axis: 10, value: 1.5}
+          {axis: 20, value: 3.2}
+          {axis: 30, value: 4.6}
+          {axis: 40, value: 4.5}
+          {axis: 50, value: 2.6}
+          {axis: 60, value: 0.5}
+          {axis: 70, value: -0.4}
+          {axis: 80, value: -1.1}
+          {axis: 90, value: -2.6}
+          {axis: 100, value: -3.7}
+          {axis: 110, value: -3.5}
+          {axis: 120, value: -2.3}
+          {axis: 130, value: -1.1}
+          {axis: 140, value: -0.6}
+          {axis: 150, value: -0.6}
+          {axis: 160, value: -0.7}
+          {axis: 170, value: -1.4}
+          {axis: 180, value: -3.1}
+          {axis: 190, value: -3.9}
+          {axis: 200, value: -5.0}
+          {axis: 210, value: -7.4}
+          {axis: 220, value: -7.5}
+          {axis: 230, value: -11.5}
+          {axis: 240, value: -13.4}
+          {axis: 250, value: -9.6}
+          {axis: 260, value: -13.7}
+          {axis: 270, value: -12.4}
+          {axis: 280, value: -14.0}
+          {axis: 290, value: -11.6}
+          {axis: 300, value: -8.7}
+          {axis: 310, value: -8.8}
+          {axis: 320, value: -7.4}
+          {axis: 330, value: -6.3}
+          {axis: 340, value: -4.3}
+          {axis: 350, value: -2.0}
+          {axis: 360, value: 0}
+        ], (degree, value) ->
+          document.getElementById('degree_4000').innerHTML = Math.round(degree)
+          document.getElementById('value_4000').innerHTML = value
 
       listerner = (ev, radial) ->
         el = ev.currentTarget
@@ -245,23 +251,13 @@
       document.getElementById("fre_4000").addEventListener 'click', (ev) -> listerner(ev, radial4000)
 
       barChart = new AV.BarChart('#bar')
-      barChart.draw
-        axisLabel: [
-          {label: '-20', value: -20}
-          {label: '-15', value: -15}
-          {label: '-10', value: -10}
-          {label: '-5', value: -5}
-          {label: '0', value: 0}
-          {label: '5', value: 5}
-        ]
-      window.bars = barChart.bar [
-        {value: 0, label: 1000}
-        {value: -15, label: 4000}
-      ]
+      barChart.draw ['1000', '4000']
+      window.bars = barChart.bars [-10, -15]
 
       polarPlot.on 'degreeChange', (data) ->
-        bars.update(data)
-
+        values = for item in data
+          if item.visible then item.value else -20
+        bars.update(values)
     </script>
   </body>
 </html>

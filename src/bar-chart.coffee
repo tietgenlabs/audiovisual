@@ -3,82 +3,76 @@ class BarChart
     @config =
       width: 500
       height: 100
-      labelOffset: 20
+      xLabelOffset: 30
+      yLabelOffset: 100
+      maxValue: 5
+      minValue: -20
+      labelTicks: 5
 
     (@config[key] = value for key, value of options)
 
-  draw: ({axisLabels}) ->
+  draw: (@yAxisLabels) ->
     @graph = d3.select(@id)
       .append("svg")
       .attr("class", "bar-chart")
       .attr("width", @config.width + 120)
-      .attr("height", @config.height + @config.labelOffset)
+      .attr("height", @config.height + @config.xLabelOffset)
       .append("g")
 
-  bar: (data) ->
-    values = (item.value for item in data)
-    labels = (item.label for item in data)
-
-    x = d3.scale.linear()
-      .domain([-20, 5])
+    @xFunc = d3.scale.linear()
+      .domain([@config.minValue, @config.maxValue])
       .range([0, @config.width])
 
-    y = d3.scale.ordinal()
-      .domain(values)
+    @yFunc = d3.scale.ordinal()
+      .domain(@yAxisLabels)
       .rangeBands([0, @config.height])
 
     @graph.selectAll("text.name")
-      .data(labels)
+      .data(@yAxisLabels)
       .enter().append("text")
-      .attr("x", 100 / 2)
-      .attr("y", (d, i) -> (i * y.rangeBand()) + y.rangeBand() / 2)
+      .attr("x", @config.yLabelOffset / 2)
+      .attr("y", (d, i) => (i * @yFunc.rangeBand()) + @yFunc.rangeBand() / 2)
       .attr("dy", ".36em")
       .attr("text-anchor", "middle")
       .attr('class', (d) -> "label label_#{d}")
       .text(String)
 
     @graph.selectAll(".rule")
-      .data(x.ticks(5))
+      .data(@xFunc.ticks(@config.labelTicks))
       .enter().append("text")
       .attr("class", "axis-label")
-      .attr("x", (d) -> x(d) + 100)
-      .attr("y", @config.height + @config.labelOffset)
+      .attr("x", (d) => @xFunc(d) + @config.yLabelOffset)
+      .attr("y", @config.height + @config.xLabelOffset)
       .attr("dy", -6)
       .text(String)
 
-
-    @chart = @graph.append('g')
-      .attr('class', 'chart')
-
-    bars = @chart.selectAll("rect").data(values)
-
-    bars
-      .enter()
-      .append("rect")
-      .attr("x", 100)
-      .attr("class", (d, i) -> "bar label_#{labels[i]}")
-      .attr("y", y)
-      .attr("height", y.rangeBand())
-      .attr("width", x)
-
-    bars
-      .exit()
-      .remove()
-
-    @chart.selectAll("line")
-      .data(x.ticks(5))
+    @graph.selectAll("line")
+      .data(@xFunc.ticks(@config.labelTicks))
       .enter()
       .append("line")
       .attr("class", "line")
-      .attr("x1", (d) -> x(d) + 100)
-      .attr("x2", (d) -> x(d) + 100)
+      .attr("x1", (d) => @xFunc(d) + @config.yLabelOffset)
+      .attr("x2", (d) => @xFunc(d) + @config.yLabelOffset)
       .attr("y1", 0)
-      .attr("y2", (y.rangeBand()) * labels.length)
+      .attr("y2", @config.height)
 
-    update: (data) ->
-      if data
-        values = (item.value for item in data)
-        bars.data(values)
-          .attr("width", x)
+
+  bars: (data) ->
+    @yFunc = d3.scale.ordinal()
+      .domain(data)
+      .rangeBands([0, @config.height])
+
+    bars = @graph.selectAll("rect")
+      .data(data)
+      .enter()
+      .append("rect")
+      .attr("x", @config.yLabelOffset)
+      .attr("class", (d, i) => "bar label_#{@yAxisLabels[i]}")
+      .attr("y", @yFunc)
+      .attr("height", @yFunc.rangeBand())
+      .attr("width", @xFunc)
+
+    update: (data) =>
+      bars.data(data).attr("width", @xFunc)
 
 module.exports = BarChart

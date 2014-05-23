@@ -59,7 +59,6 @@ class PolarPlot extends EventEmitter
         .duration(@config.radarRotationSpeed)
 
     rotate()
-
     setInterval rotate, @config.radarRotationSpeed
 
   dataAtDegree: (degree) ->
@@ -67,12 +66,16 @@ class PolarPlot extends EventEmitter
     for set in @datasets
       for point, i in set.data
         if Math.round(degree) <= point.axis
-          out.push label: set.label, value: set.data[i].value
+          out.push
+            label: set.label
+            value: set.data[i].value
+            visible: set.visible
           break
     out
 
-  radial: (id, label, data, degreeCallback) ->
-    @datasets.push label: label, data: data
+  radial: ({id, label, data}, degreeCallback) ->
+    datasetIndex = @datasets.push label: label, data: data
+    datasetIndex--
 
     # order data
     wrappedDegreeCallback = (degree) ->
@@ -97,10 +100,11 @@ class PolarPlot extends EventEmitter
         .attr("class", "radial")
         .attr("id", id)
         .attr("d", line)
+      @datasets[datasetIndex].visible = true
 
-    remove: ->
+    remove: =>
       radial.remove()
-
+      @datasets[datasetIndex].visible = false
 
 renderCircles = (graph, labels, config, customRadius) ->
   levels = graph.selectAll(".levels")

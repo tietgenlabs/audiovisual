@@ -18,7 +18,11 @@ BarChart = (function() {
     this.config = {
       width: 500,
       height: 100,
-      labelOffset: 20
+      xLabelOffset: 30,
+      yLabelOffset: 100,
+      maxValue: 5,
+      minValue: -20,
+      labelTicks: 5
     };
     for (key in options) {
       value = options[key];
@@ -26,68 +30,48 @@ BarChart = (function() {
     }
   }
 
-  BarChart.prototype.draw = function(_arg) {
-    var axisLabels;
-    axisLabels = _arg.axisLabels;
-    return this.graph = d3.select(this.id).append("svg").attr("class", "bar-chart").attr("width", this.config.width + 120).attr("height", this.config.height + this.config.labelOffset).append("g");
-  };
-
-  BarChart.prototype.bar = function(data) {
-    var bars, item, labels, values, x, y;
-    values = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        item = data[_i];
-        _results.push(item.value);
-      }
-      return _results;
-    })();
-    labels = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        item = data[_i];
-        _results.push(item.label);
-      }
-      return _results;
-    })();
-    x = d3.scale.linear().domain([-20, 5]).range([0, this.config.width]);
-    y = d3.scale.ordinal().domain(values).rangeBands([0, this.config.height]);
-    this.graph.selectAll("text.name").data(labels).enter().append("text").attr("x", 100 / 2).attr("y", function(d, i) {
-      return (i * y.rangeBand()) + y.rangeBand() / 2;
-    }).attr("dy", ".36em").attr("text-anchor", "middle").attr('class', function(d) {
+  BarChart.prototype.draw = function(yAxisLabels) {
+    this.yAxisLabels = yAxisLabels;
+    this.graph = d3.select(this.id).append("svg").attr("class", "bar-chart").attr("width", this.config.width + 120).attr("height", this.config.height + this.config.xLabelOffset).append("g");
+    this.xFunc = d3.scale.linear().domain([this.config.minValue, this.config.maxValue]).range([0, this.config.width]);
+    this.yFunc = d3.scale.ordinal().domain(this.yAxisLabels).rangeBands([0, this.config.height]);
+    this.graph.selectAll("text.name").data(this.yAxisLabels).enter().append("text").attr("x", this.config.yLabelOffset / 2).attr("y", (function(_this) {
+      return function(d, i) {
+        return (i * _this.yFunc.rangeBand()) + _this.yFunc.rangeBand() / 2;
+      };
+    })(this)).attr("dy", ".36em").attr("text-anchor", "middle").attr('class', function(d) {
       return "label label_" + d;
     }).text(String);
-    this.graph.selectAll(".rule").data(x.ticks(5)).enter().append("text").attr("class", "axis-label").attr("x", function(d) {
-      return x(d) + 100;
-    }).attr("y", this.config.height + this.config.labelOffset).attr("dy", -6).text(String);
-    this.chart = this.graph.append('g').attr('class', 'chart');
-    bars = this.chart.selectAll("rect").data(values);
-    bars.enter().append("rect").attr("x", 100).attr("class", function(d, i) {
-      return "bar label_" + labels[i];
-    }).attr("y", y).attr("height", y.rangeBand()).attr("width", x);
-    bars.exit().remove();
-    this.chart.selectAll("line").data(x.ticks(5)).enter().append("line").attr("class", "line").attr("x1", function(d) {
-      return x(d) + 100;
-    }).attr("x2", function(d) {
-      return x(d) + 100;
-    }).attr("y1", 0).attr("y2", (y.rangeBand()) * labels.length);
+    this.graph.selectAll(".rule").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("text").attr("class", "axis-label").attr("x", (function(_this) {
+      return function(d) {
+        return _this.xFunc(d) + _this.config.yLabelOffset;
+      };
+    })(this)).attr("y", this.config.height + this.config.xLabelOffset).attr("dy", -6).text(String);
+    return this.graph.selectAll("line").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("line").attr("class", "line").attr("x1", (function(_this) {
+      return function(d) {
+        return _this.xFunc(d) + _this.config.yLabelOffset;
+      };
+    })(this)).attr("x2", (function(_this) {
+      return function(d) {
+        return _this.xFunc(d) + _this.config.yLabelOffset;
+      };
+    })(this)).attr("y1", 0).attr("y2", this.config.height);
+  };
+
+  BarChart.prototype.bars = function(data) {
+    var bars;
+    this.yFunc = d3.scale.ordinal().domain(data).rangeBands([0, this.config.height]);
+    bars = this.graph.selectAll("rect").data(data).enter().append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
+      return function(d, i) {
+        return "bar label_" + _this.yAxisLabels[i];
+      };
+    })(this)).attr("y", this.yFunc).attr("height", this.yFunc.rangeBand()).attr("width", this.xFunc);
     return {
-      update: function(data) {
-        if (data) {
-          values = (function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = data.length; _i < _len; _i++) {
-              item = data[_i];
-              _results.push(item.value);
-            }
-            return _results;
-          })();
-          return bars.data(values).attr("width", x);
-        }
-      }
+      update: (function(_this) {
+        return function(data) {
+          return bars.data(data).attr("width", _this.xFunc);
+        };
+      })(this)
     };
   };
 
@@ -264,7 +248,8 @@ PolarPlot = (function(_super) {
         if (Math.round(degree) <= point.axis) {
           out.push({
             label: set.label,
-            value: set.data[i].value
+            value: set.data[i].value,
+            visible: set.visible
           });
           break;
         }
@@ -273,12 +258,14 @@ PolarPlot = (function(_super) {
     return out;
   };
 
-  PolarPlot.prototype.radial = function(id, label, data, degreeCallback) {
-    var line, radial, wrappedDegreeCallback;
-    this.datasets.push({
+  PolarPlot.prototype.radial = function(_arg, degreeCallback) {
+    var data, datasetIndex, id, label, line, radial, wrappedDegreeCallback;
+    id = _arg.id, label = _arg.label, data = _arg.data;
+    datasetIndex = this.datasets.push({
       label: label,
       data: data
     });
+    datasetIndex--;
     wrappedDegreeCallback = function(degree) {
       var foundPoint, i, point, _i, _len;
       for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
@@ -304,12 +291,16 @@ PolarPlot = (function(_super) {
     return {
       render: (function(_this) {
         return function() {
-          return radial = _this.graph.append("path").datum(data).attr("class", "radial").attr("id", id).attr("d", line);
+          radial = _this.graph.append("path").datum(data).attr("class", "radial").attr("id", id).attr("d", line);
+          return _this.datasets[datasetIndex].visible = true;
         };
       })(this),
-      remove: function() {
-        return radial.remove();
-      }
+      remove: (function(_this) {
+        return function() {
+          radial.remove();
+          return _this.datasets[datasetIndex].visible = false;
+        };
+      })(this)
     };
   };
 
