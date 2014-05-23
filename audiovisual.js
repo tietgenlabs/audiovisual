@@ -209,7 +209,7 @@ PolarPlot = (function(_super) {
     minRingValue = Math.min.apply(Math, values);
     maxRingValue = Math.max.apply(Math, values);
     this.customRadius = d3.scale.linear().domain([minRingValue, maxRingValue]).range([0, this.config.radius]);
-    this.graph = d3.select(this.id).append("svg").attr("width", this.config.width).attr("height", this.config.height).append("g").attr("transform", "translate(" + (this.config.width / 2) + ", " + (this.config.height / 2) + ")");
+    this.graph = d3.select(this.id).append("svg").attr("width", this.config.width).attr("height", this.config.height).attr("class", "polar-plot").append("g").attr("transform", "translate(" + (this.config.width / 2) + ", " + (this.config.height / 2) + ")");
     renderCircles(this.graph, ringLabels, this.config, this.customRadius);
     renderAxis(this.graph, axisLabels, this.config);
     direction = renderDirection(this.graph, this.config);
@@ -315,7 +315,7 @@ renderCircles = function(graph, labels, config, customRadius) {
     return customRadius(d.value);
   }).attr("class", function(d, i) {
     var classNames;
-    classNames = "ring-svg";
+    classNames = "ring";
     if ((i + 1) === labels.length) {
       classNames += " last-child";
     }
@@ -327,7 +327,7 @@ renderCircles = function(graph, labels, config, customRadius) {
   });
   return levels.append("svg:text").attr("x", config.circleLabelOffsetX).attr("y", function(d) {
     return -customRadius(d.value) - config.circleLabelOffsetY;
-  }).attr("class", "ring-label-svg").text(function(d) {
+  }).attr("class", "ring-label").text(function(d) {
     return d.label;
   });
 };
@@ -339,8 +339,8 @@ renderAxis = function(graph, labels, config) {
       return "rotate(" + (d.axis - config.zeroOffset) + ")";
     };
   })(this));
-  axis.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "axis-svg");
-  return axis.append("text").attr("x", config.radius).attr("dy", ".35em").attr("class", "axis-label-svg").attr("transform", (function(_this) {
+  axis.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "axis");
+  return axis.append("text").attr("x", config.radius).attr("dy", ".35em").attr("class", "axis-label").attr("transform", (function(_this) {
     return function(d) {
       var rotate, translate;
       translate = "translate(" + config.axisLabelOffsetX + ", " + config.axisLabelOffsetY + ")";
@@ -358,7 +358,7 @@ renderDirection = function(graph, config, radarCallback) {
   if (radarCallback == null) {
     radarCallback = function() {};
   }
-  return graph.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "direction-svg");
+  return graph.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "direction");
 };
 
 module.exports = PolarPlot;

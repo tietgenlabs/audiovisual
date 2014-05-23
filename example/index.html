@@ -4,6 +4,7 @@
     <script src="coffee-script.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
     <script src="../audiovisual.js"></script>
+    <link rel="stylesheet" href="../audiovisual.css" />
     <style>
       body {
         font-family: helvetica;
@@ -11,30 +12,6 @@
       }
       #plot {
         padding: 100px;
-      }
-      .ring-label-svg {
-        font-size: 14px;
-        text-anchor: middle;
-        z-index: 10;
-        fill: #777;
-      }
-      .ring-svg.last-child {
-        stroke: #AAA;
-      }
-      .axis-svg {
-        stroke: #FFF;
-        stroke-width: 1px;
-        z-index: 1;
-      }
-      .axis-label-svg {
-        font-size: 15px;
-        text-anchor: middle;
-        fill: #999;
-      }
-      .direction-svg {
-        stroke: yellow;
-        stroke-width: 3px;
-        z-index: 1;
       }
       #frequency_1000,
       .freq_1000 {
@@ -57,16 +34,6 @@
       .bar-chart .label_1000 {
         fill: #4D90FE;
         fill-opacity: 0.3;
-      }
-      .bar-chart .line {
-        stroke: #CCC;
-      }
-      .bar-chart .axis-label {
-        font-size: 14px;
-        text-anchor: middle;
-      }
-      .bar-chart .chart {
-        stroke: #CCC;
       }
       ul {
         margin-bottom: -80px;

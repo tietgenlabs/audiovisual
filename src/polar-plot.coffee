@@ -37,6 +37,7 @@ class PolarPlot extends EventEmitter
       .append("svg")
       .attr("width", @config.width)
       .attr("height", @config.height)
+      .attr("class", "polar-plot")
       .append("g")
       .attr("transform", "translate(#{@config.width / 2}, #{@config.height / 2})")
 
@@ -115,7 +116,7 @@ renderCircles = (graph, labels, config, customRadius) ->
   levels.append("circle")
     .attr("r", (d) -> customRadius(d.value))
     .attr("class", (d, i) ->
-      classNames = "ring-svg"
+      classNames = "ring"
       classNames += " last-child" if (i + 1) == labels.length
       classNames
     )
@@ -125,7 +126,7 @@ renderCircles = (graph, labels, config, customRadius) ->
   levels.append("svg:text")
     .attr("x", config.circleLabelOffsetX)
     .attr("y", (d) -> -customRadius(d.value) - config.circleLabelOffsetY)
-    .attr("class", "ring-label-svg")
+    .attr("class", "ring-label")
     .text((d) -> d.label)
 
 renderAxis = (graph, labels, config) ->
@@ -139,12 +140,12 @@ renderAxis = (graph, labels, config) ->
 
   axis.append("line")
     .attr("x2", config.radius - config.axisLineLengthOffset)
-    .attr("class", "axis-svg")
+    .attr("class", "axis")
 
   axis.append("text")
     .attr("x", config.radius)
     .attr("dy", ".35em")
-    .attr("class", "axis-label-svg")
+    .attr("class", "axis-label")
     .attr("transform", (d) =>
       translate = "translate(#{config.axisLabelOffsetX}, #{config.axisLabelOffsetY})"
       rotate = "rotate(#{config.axisLabelRotationOffset - d.axis}, #{config.radius}, 0)"
@@ -157,6 +158,6 @@ renderAxis = (graph, labels, config) ->
 renderDirection = (graph, config, radarCallback = ->) ->
   graph.append("line")
     .attr("x2", config.radius - config.axisLineLengthOffset)
-    .attr("class", "direction-svg")
+    .attr("class", "direction")
 
 module.exports = PolarPlot

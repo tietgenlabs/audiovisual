@@ -1,0 +1,34 @@
+svg.polar-plot .ring-label {
+  font-size: 14px;
+  text-anchor: middle;
+  z-index: 10;
+  fill: #777;
+}
+svg.polar-plot .ring.last-child {
+  stroke: #AAA;
+}
+svg.polar-plot .axis {
+  stroke: #FFF;
+  stroke-width: 1px;
+  z-index: 1;
+}
+svg.polar-plot .axis-label {
+  font-size: 15px;
+  text-anchor: middle;
+  fill: #999;
+}
+svg.polar-plot .direction {
+  stroke: yellow;
+  stroke-width: 3px;
+  z-index: 1;
+}
+svg.bar-chart .line {
+  stroke: #CCC;
+}
+svg.bar-chart .axis-label {
+  font-size: 14px;
+  text-anchor: middle;
+}
+svg.bar-chart .chart {
+  stroke: #CCC;
+}
