@@ -31,6 +31,10 @@ svg.polar-plot .radial {
   stroke-width: 3px;
   fill-opacity: 0.3;
 }
+svg.polar-plot .point {
+  stroke-width: 2px;
+  fill: #FFF;
+}
 
 /* Horizontal bar chart
  * -------------------------------------- */

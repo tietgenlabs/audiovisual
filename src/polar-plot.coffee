@@ -47,7 +47,7 @@ class PolarPlot extends EventEmitter
     renderCircles(@graph, ringLabels, @config, @customRadius)
     renderRadialAxis(@graph, axisLabels, @config)
     renderRingAxis(@graph, ringLabels, @config, @customRadius)
-    @radialGroup = @graph.append("g")
+    @radialsGroup = @graph.append("g")
 
     if @config.directionalLine
       direction = renderDirection(@graph, @config)
@@ -62,7 +62,8 @@ class PolarPlot extends EventEmitter
             (t) =>
               degree = interpolate(t)
               (callback(degree) for callback in @degreeCallbacks)
-              @emit 'degreeChange', @dataAtDegree(degree)
+              dataAtDegree = @dataAtDegree(degree)
+              @emit 'degreeChange', dataAtDegree
               "rotate(#{degree - @config.zeroOffset})"
           )
           .duration(@config.radarRotationSpeed)
@@ -86,13 +87,24 @@ class PolarPlot extends EventEmitter
     datasetIndex = @datasets.push label: label, data: data
     datasetIndex--
 
+    radial = null
+    pointMarker = null
+
     # order data
-    wrappedDegreeCallback = (degree) ->
+    wrappedDegreeCallback = (degree) =>
       for point, i in data
         if Math.round(degree) <= point.axis
           foundPoint = data[i]
           break
       degreeCallback(degree, foundPoint?.value)
+      if pointMarker? && foundPoint.value
+        pointMarker
+          .data([{value: foundPoint.value, axis: degree}])
+          .attr("cy", (d) => @customRadius(d.value))
+          .attr("r", 5)
+          .attr("transform", =>
+            "rotate(#{degree + (@config.zeroOffset * 2)})"
+          )
 
     @degreeCallbacks.push wrappedDegreeCallback
 
@@ -101,14 +113,21 @@ class PolarPlot extends EventEmitter
       .angle((d) => d.axis * (Math.PI / 180))
       .interpolate(@config.radialInpolation)
 
-    radial = null
+    radialGroup = @radialsGroup.append("g")
 
     render: =>
-      radial = @radialGroup.append("path")
+      radial = radialGroup.append("path")
         .datum(data)
-        .attr("class", "radial")
+        .attr("class", "radial radial_#{label}")
         .attr("id", id)
         .attr("d", line)
+
+      pointMarker = radialGroup.selectAll("circle.point")
+        .data([{value: 0, axis: 45}])
+        .enter()
+        .append("circle")
+        .attr("class", "point point_#{label}")
+
       @datasets[datasetIndex].visible = true
 
     remove: =>

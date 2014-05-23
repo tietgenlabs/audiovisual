@@ -216,7 +216,7 @@ PolarPlot = (function(_super) {
     renderCircles(this.graph, ringLabels, this.config, this.customRadius);
     renderRadialAxis(this.graph, axisLabels, this.config);
     renderRingAxis(this.graph, ringLabels, this.config, this.customRadius);
-    this.radialGroup = this.graph.append("g");
+    this.radialsGroup = this.graph.append("g");
     if (this.config.directionalLine) {
       direction = renderDirection(this.graph, this.config);
     }
@@ -227,14 +227,15 @@ PolarPlot = (function(_super) {
             var interpolate;
             interpolate = d3.interpolate(0, 360);
             return function(t) {
-              var callback, degree, _i, _len, _ref;
+              var callback, dataAtDegree, degree, _i, _len, _ref;
               degree = interpolate(t);
               _ref = _this.degreeCallbacks;
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 callback = _ref[_i];
                 callback(degree);
               }
-              _this.emit('degreeChange', _this.dataAtDegree(degree));
+              dataAtDegree = _this.dataAtDegree(degree);
+              _this.emit('degreeChange', dataAtDegree);
               return "rotate(" + (degree - _this.config.zeroOffset) + ")";
             };
           }).duration(_this.config.radarRotationSpeed);
@@ -268,24 +269,40 @@ PolarPlot = (function(_super) {
   };
 
   PolarPlot.prototype.radial = function(_arg, degreeCallback) {
-    var data, datasetIndex, id, label, line, radial, wrappedDegreeCallback;
+    var data, datasetIndex, id, label, line, pointMarker, radial, radialGroup, wrappedDegreeCallback;
     id = _arg.id, label = _arg.label, data = _arg.data;
     datasetIndex = this.datasets.push({
       label: label,
       data: data
     });
     datasetIndex--;
-    wrappedDegreeCallback = function(degree) {
-      var foundPoint, i, point, _i, _len;
-      for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
-        point = data[i];
-        if (Math.round(degree) <= point.axis) {
-          foundPoint = data[i];
-          break;
+    radial = null;
+    pointMarker = null;
+    wrappedDegreeCallback = (function(_this) {
+      return function(degree) {
+        var foundPoint, i, point, _i, _len;
+        for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
+          point = data[i];
+          if (Math.round(degree) <= point.axis) {
+            foundPoint = data[i];
+            break;
+          }
         }
-      }
-      return degreeCallback(degree, foundPoint != null ? foundPoint.value : void 0);
-    };
+        degreeCallback(degree, foundPoint != null ? foundPoint.value : void 0);
+        if ((pointMarker != null) && foundPoint.value) {
+          return pointMarker.data([
+            {
+              value: foundPoint.value,
+              axis: degree
+            }
+          ]).attr("cy", function(d) {
+            return _this.customRadius(d.value);
+          }).attr("r", 5).attr("transform", function() {
+            return "rotate(" + (degree + (_this.config.zeroOffset * 2)) + ")";
+          });
+        }
+      };
+    })(this);
     this.degreeCallbacks.push(wrappedDegreeCallback);
     line = d3.svg.line.radial().radius((function(_this) {
       return function(d) {
@@ -296,11 +313,17 @@ PolarPlot = (function(_super) {
         return d.axis * (Math.PI / 180);
       };
     })(this)).interpolate(this.config.radialInpolation);
-    radial = null;
+    radialGroup = this.radialsGroup.append("g");
     return {
       render: (function(_this) {
         return function() {
-          radial = _this.radialGroup.append("path").datum(data).attr("class", "radial").attr("id", id).attr("d", line);
+          radial = radialGroup.append("path").datum(data).attr("class", "radial radial_" + label).attr("id", id).attr("d", line);
+          pointMarker = radialGroup.selectAll("circle.point").data([
+            {
+              value: 0,
+              axis: 45
+            }
+          ]).enter().append("circle").attr("class", "point point_" + label);
           return _this.datasets[datasetIndex].visible = true;
         };
       })(this),
