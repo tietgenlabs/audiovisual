@@ -111,33 +111,43 @@ HorizontalBarChart = (function() {
     this.graph = d3.select(this.id).append("svg").attr("class", "bar-chart").attr("width", this.config.width + 120).attr("height", this.config.height + this.config.xLabelOffset).append("g");
     this.xFunc = d3.scale.linear().domain([this.config.minValue, this.config.maxValue]).range([0, this.config.width]);
     this.yFunc = d3.scale.ordinal().domain(this.yAxisLabels).rangeBands([0, this.config.height]);
-    this.graph.selectAll("text.name").data(this.yAxisLabels).enter().append("text").attr("x", this.config.yLabelOffset / 2).attr("y", (function(_this) {
+    this.graph.selectAll("text.label").data(this.yAxisLabels).enter().append("text").attr("x", this.config.yLabelOffset / 2).attr("y", (function(_this) {
       return function(d, i) {
         return (i * _this.yFunc.rangeBand()) + _this.yFunc.rangeBand() / 2;
       };
     })(this)).attr("dy", ".36em").attr("text-anchor", "middle").attr('class', function(d) {
       return "label label_" + d;
     }).text(String);
+    this.graph.append("rect").attr('class', 'chart').attr("x", this.config.yLabelOffset + .5).attr("height", this.config.height + .5).attr("width", this.config.width + .5);
     this.graph.selectAll(".rule").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("text").attr("class", "axis-label").attr("x", (function(_this) {
       return function(d) {
         return _this.xFunc(d) + _this.config.yLabelOffset;
       };
     })(this)).attr("y", this.config.height + this.config.xLabelOffset).attr("dy", -6).text(String);
-    return this.graph.selectAll("line").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("line").attr("class", "line").attr("x1", (function(_this) {
+    this.graph.selectAll("rect.section").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("rect").attr("class", "section").attr("x", (function(_this) {
+      return function(d, i) {
+        return _this.config.yLabelOffset + .5;
+      };
+    })(this)).attr("width", (function(_this) {
       return function(d) {
-        return _this.xFunc(d) + _this.config.yLabelOffset;
+        return _this.xFunc(d) + .5;
+      };
+    })(this)).attr("y", .5).attr("height", this.config.height + .5);
+    return this.graph.selectAll("line.line").data(this.xFunc.ticks(this.config.labelTicks)).enter().append("line").attr("class", "line").attr("x1", (function(_this) {
+      return function(d) {
+        return _this.xFunc(d) + _this.config.yLabelOffset + .5;
       };
     })(this)).attr("x2", (function(_this) {
       return function(d) {
-        return _this.xFunc(d) + _this.config.yLabelOffset;
+        return _this.xFunc(d) + _this.config.yLabelOffset + .5;
       };
-    })(this)).attr("y1", 0).attr("y2", this.config.height);
+    })(this)).attr("y1", .5).attr("y2", this.config.height + .5);
   };
 
   HorizontalBarChart.prototype.bars = function(data) {
     var bars;
     this.yFunc = d3.scale.ordinal().domain(data).rangeBands([0, this.config.height]);
-    bars = this.graph.selectAll("rect").data(data).enter().append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
+    bars = this.graph.selectAll("rect.bar").data(data).enter().append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
       return function(d, i) {
         return "bar label_" + _this.yAxisLabels[i];
       };

@@ -38,13 +38,22 @@ svg.polar-plot .point {
 
 /* Horizontal bar chart
  * -------------------------------------- */
-svg.bar-chart .line {
-  stroke: #CCC;
-}
 svg.bar-chart .axis-label {
   font-size: 14px;
   text-anchor: middle;
 }
 svg.bar-chart .chart {
+  stroke: #AAA;
+  fill: #EEE;
+}
+svg.bar-chart .line {
   stroke: #CCC;
+  stroke-width: 1px;
+}
+svg.bar-chart .label {
+  display: none;
+}
+svg.bar-chart .section {
+  fill: #AAA;
+  opacity: 0.1;
 }
