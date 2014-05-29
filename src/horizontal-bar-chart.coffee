@@ -27,7 +27,7 @@ class HorizontalBarChart
       .domain(@yAxisLabels)
       .rangeBands([0, @config.height])
 
-    @graph.selectAll("text.name")
+    @graph.selectAll("text.label")
       .data(@yAxisLabels)
       .enter().append("text")
       .attr("x", @config.yLabelOffset / 2)
@@ -36,6 +36,12 @@ class HorizontalBarChart
       .attr("text-anchor", "middle")
       .attr('class', (d) -> "label label_#{d}")
       .text(String)
+
+    @graph.append("rect")
+      .attr('class', 'chart')
+      .attr("x", @config.yLabelOffset + .5)
+      .attr("height", @config.height + .5)
+      .attr("width", @config.width + .5)
 
     @graph.selectAll(".rule")
       .data(@xFunc.ticks(@config.labelTicks))
@@ -46,15 +52,25 @@ class HorizontalBarChart
       .attr("dy", -6)
       .text(String)
 
-    @graph.selectAll("line")
+    @graph.selectAll("rect.section")
+      .data(@xFunc.ticks(@config.labelTicks))
+      .enter()
+      .append("rect")
+      .attr("class", "section")
+      .attr("x", (d, i) => @config.yLabelOffset + .5)
+      .attr("width", (d) => @xFunc(d) + .5)
+      .attr("y", .5)
+      .attr("height", @config.height + .5)
+
+    @graph.selectAll("line.line")
       .data(@xFunc.ticks(@config.labelTicks))
       .enter()
       .append("line")
       .attr("class", "line")
-      .attr("x1", (d) => @xFunc(d) + @config.yLabelOffset)
-      .attr("x2", (d) => @xFunc(d) + @config.yLabelOffset)
-      .attr("y1", 0)
-      .attr("y2", @config.height)
+      .attr("x1", (d) => @xFunc(d) + @config.yLabelOffset + .5)
+      .attr("x2", (d) => @xFunc(d) + @config.yLabelOffset + .5)
+      .attr("y1", .5)
+      .attr("y2", @config.height + .5)
 
 
   bars: (data) ->
@@ -62,7 +78,7 @@ class HorizontalBarChart
       .domain(data)
       .rangeBands([0, @config.height])
 
-    bars = @graph.selectAll("rect")
+    bars = @graph.selectAll("rect.bar")
       .data(data)
       .enter()
       .append("rect")
