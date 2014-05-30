@@ -145,17 +145,43 @@ HorizontalBarChart = (function() {
   };
 
   HorizontalBarChart.prototype.bars = function(data) {
-    var bars;
+    var bars, lines;
     this.yFunc = d3.scale.ordinal().domain(data).rangeBands([0, this.config.height]);
     bars = this.graph.selectAll("rect.bar").data(data).enter().append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
       return function(d, i) {
         return "bar label_" + _this.yAxisLabels[i];
       };
     })(this)).attr("y", this.yFunc).attr("height", this.yFunc.rangeBand()).attr("width", this.xFunc);
+    lines = this.graph.selectAll("line.end_cap").data(data).enter().append("line").attr("class", (function(_this) {
+      return function(d, i) {
+        return "end_cap label_" + _this.yAxisLabels[i];
+      };
+    })(this)).attr("x1", (function(_this) {
+      return function(d) {
+        return _this.config.yLabelOffset + _this.xFunc(d) + .5;
+      };
+    })(this)).attr("x2", (function(_this) {
+      return function(d) {
+        return _this.config.yLabelOffset + _this.xFunc(d) + .5;
+      };
+    })(this)).attr("y1", (function(_this) {
+      return function(d, i) {
+        return i * _this.yFunc.rangeBand();
+      };
+    })(this)).attr("y2", (function(_this) {
+      return function(d, i) {
+        return (i + 1) * _this.yFunc.rangeBand();
+      };
+    })(this));
     return {
       update: (function(_this) {
         return function(data, duration) {
-          return bars.data(data).transition().duration(duration).attr("width", _this.xFunc);
+          bars.data(data).transition().duration(duration).attr("width", _this.xFunc);
+          return lines.data(data).transition().duration(duration).attr("x1", function(d) {
+            return _this.config.yLabelOffset + _this.xFunc(d) + .5;
+          }).attr("x2", function(d) {
+            return _this.config.yLabelOffset + _this.xFunc(d) + .5;
+          });
         };
       })(this)
     };

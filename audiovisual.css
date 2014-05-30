@@ -39,7 +39,8 @@ svg.polar-plot .point {
 /* Horizontal bar chart
  * -------------------------------------- */
 svg.bar-chart .axis-label {
-  font-size: 14px;
+  fill: #999;
+  font-size: 12px;
   text-anchor: middle;
 }
 svg.bar-chart .chart {
