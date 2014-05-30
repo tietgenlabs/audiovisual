@@ -88,10 +88,26 @@ class HorizontalBarChart
       .attr("height", @yFunc.rangeBand())
       .attr("width", @xFunc)
 
+    lines = @graph.selectAll("line.end_cap")
+      .data(data)
+      .enter()
+      .append("line")
+      .attr("class", (d, i) => "end_cap label_#{@yAxisLabels[i]}")
+      .attr("x1", (d) => @config.yLabelOffset + @xFunc(d) + .5)
+      .attr("x2", (d) => @config.yLabelOffset + @xFunc(d) + .5)
+      .attr("y1", (d, i) => i * @yFunc.rangeBand())
+      .attr("y2", (d, i) => (i + 1) * @yFunc.rangeBand())
+
     update: (data, duration) =>
       bars.data(data)
         .transition()
         .duration(duration)
         .attr("width", @xFunc)
+
+      lines.data(data)
+        .transition()
+        .duration(duration)
+        .attr("x1", (d) => @config.yLabelOffset + @xFunc(d) + .5)
+        .attr("x2", (d) => @config.yLabelOffset + @xFunc(d) + .5)
 
 module.exports = HorizontalBarChart
