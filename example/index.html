@@ -229,7 +229,9 @@
       document.getElementById("fre_1000").addEventListener 'click', (ev) -> listerner(ev, radial1000)
       document.getElementById("fre_4000").addEventListener 'click', (ev) -> listerner(ev, radial4000)
 
-      barChart = new AV.HorizontalBarChart('#bar')
+      barChart = new AV.HorizontalBarChart '#bar',
+        xLabelOffset: 25
+
       barChart.draw ['1000', '4000']
       window.bars = barChart.bars [-10, -15]
 
