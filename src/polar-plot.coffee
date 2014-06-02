@@ -52,7 +52,7 @@ class PolarPlot extends EventEmitter
     if @config.directionalLine
       direction = renderDirection(@graph, @config)
 
-    if @config.directionalRotation
+    if @config.directionalRotation && @config.directionalLine
       rotate = =>
         direction
           .transition()
@@ -85,7 +85,7 @@ class PolarPlot extends EventEmitter
           break
     out
 
-  radial: ({id, label, data}, degreeCallback) ->
+  radial: ({id, label, data}, degreeCallback = ->) ->
     datasetIndex = @datasets.push label: label, data: data
     datasetIndex--
 

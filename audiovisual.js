@@ -256,7 +256,7 @@ PolarPlot = (function(_super) {
     if (this.config.directionalLine) {
       direction = renderDirection(this.graph, this.config);
     }
-    if (this.config.directionalRotation) {
+    if (this.config.directionalRotation && this.config.directionalLine) {
       rotate = (function(_this) {
         return function() {
           return direction.transition().ease("linear").attrTween("transform", function(d, i) {
@@ -307,6 +307,9 @@ PolarPlot = (function(_super) {
   PolarPlot.prototype.radial = function(_arg, degreeCallback) {
     var data, datasetIndex, id, label, line, pointMarker, radial, radialGroup, wrappedDegreeCallback;
     id = _arg.id, label = _arg.label, data = _arg.data;
+    if (degreeCallback == null) {
+      degreeCallback = function() {};
+    }
     datasetIndex = this.datasets.push({
       label: label,
       data: data

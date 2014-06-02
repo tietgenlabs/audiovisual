@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="coffee-script.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
+    <script src="../audiovisual.js"></script>
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,100,300,500,700" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../audiovisual.css" />
+    <style>
+      #plot {
+        padding: 100px;
+      }
+      #frequency_1000,
+      .freq_1000 {
+        fill: #4D90FE;
+        fill-opacity: 0.3;
+        stroke: #4D90FE;
+      }
+      #frequency_2000,
+      .freq_2000 {
+        fill: #79D366;
+        fill-opacity: 0.3;
+        stroke: #CB4437;
+      }
+      #frequency_4000,
+      .freq_4000 {
+        fill: #CB4437;
+        fill-opacity: 0.3;
+        stroke: #CB4437;
+      }
+      .point_1000 {
+        stroke: #4D90FE;
+      }
+      .point_4000 {
+        stroke: #CB4437;
+      }
+      .bar-chart .label_4000 {
+        fill: #CB4437;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .label_3000 {
+        fill: #FAB937;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .label_2000 {
+        fill: #D254DE;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .label_1000 {
+        fill: #4D90FE;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .end_cap.label_4000 {
+        stroke-width: 3px;
+        stroke: #CB4437;
+      }
+      .bar-chart .end_cap.label_3000 {
+        stroke-width: 3px;
+        stroke: #FAB937;
+      }
+      .bar-chart .end_cap.label_2000 {
+        stroke-width: 3px;
+        stroke: #D254DE;
+      }
+      .bar-chart .end_cap.label_1000 {
+        stroke-width: 3px;
+        stroke: #4D90FE;
+      }
+      #fre_1000.on {
+        background: rgba(77, 144, 254, 0.3);
+        border-color: #4D90FE;
+      }
+      #fre_4000.on {
+        background: rgba(203, 68, 55, 0.3);
+        border-color: #CB4437;
+      }
+    </style>
+  </head>
+  <body>
+    <br>
+    <br>
+    <div id="bar1"></div>
+    <br>
+    <br>
+    <div id="bar2"></div>
+    <br>
+    <br>
+    <div id="bar3"></div>
+    <script type="text/coffeescript">
+      barChart1 = new AV.HorizontalBarChart '#bar1', xLabelOffset: 25
+      barChart1.draw ['1000']
+      barChart1.bars [-10]
+
+      barChart2 = new AV.HorizontalBarChart '#bar2',
+        width: 1000
+        height: 50
+        minValue: -40
+        maxValue: 40
+      barChart2.draw ['1000', '4000']
+      barChart2.bars [-10, -15]
+
+      barChart3 = new AV.HorizontalBarChart '#bar3',
+        xLabelOffset: 50
+        height: 200
+        maxValue: 20
+        width: 700
+      barChart3.draw ['1000', '2000', '3000', '4000']
+      barChart3.bars [-10, 5, 0, -15]
+
+    </script>
+  </body>
+</html>
