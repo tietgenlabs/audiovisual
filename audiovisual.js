@@ -1,11 +1,52 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var Audiogram;
+
+Audiogram = (function() {
+  function Audiogram(id, options) {
+    var key, value;
+    this.id = id;
+    this.config = {
+      width: 500,
+      height: 500,
+      yLabelOffset: 100,
+      marginLeft: 30,
+      marginTop: 30
+    };
+    for (key in options) {
+      value = options[key];
+      this.config[key] = value;
+    }
+  }
+
+  Audiogram.prototype.draw = function() {
+    var x, xAxis, y, yAxis;
+    x = d3.scale.linear().range([0, this.config.width - this.config.marginLeft]);
+    y = d3.scale.linear().range([this.config.height - this.config.marginTop, 0]);
+    xAxis = d3.svg.axis().scale(x).orient("bottom");
+    yAxis = d3.svg.axis().scale(y).orient("left");
+    y.domain([100, -10]);
+    x.domain([250, 8000]);
+    this.graph = d3.select("body").append("svg").attr("width", this.config.width + this.config.marginLeft).attr("height", this.config.height + this.config.marginTop).attr('class', 'audiogram').append("g").attr("transform", "translate(30, 30)");
+    this.graph.append("g").attr("class", "x axis").attr("transform", "translate(0, " + (this.config.height - this.config.marginTop) + ")").call(xAxis);
+    return this.graph.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("dB");
+  };
+
+  return Audiogram;
+
+})();
+
+module.exports = Audiogram;
+
+
+},{}],2:[function(require,module,exports){
 window.AV = {
   PolarPlot: require('./polar-plot'),
-  HorizontalBarChart: require('./horizontal-bar-chart')
+  HorizontalBarChart: require('./horizontal-bar-chart'),
+  Audiogram: require('./audiogram')
 };
 
 
-},{"./horizontal-bar-chart":3,"./polar-plot":4}],2:[function(require,module,exports){
+},{"./audiogram":1,"./horizontal-bar-chart":4,"./polar-plot":5}],3:[function(require,module,exports){
 var EventEmitter,
   __slice = [].slice;
 
@@ -81,7 +122,7 @@ EventEmitter = (function() {
 module.exports = EventEmitter;
 
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var HorizontalBarChart;
 
 HorizontalBarChart = (function() {
@@ -194,7 +235,7 @@ HorizontalBarChart = (function() {
 module.exports = HorizontalBarChart;
 
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var EventEmitter, PolarPlot, renderCircles, renderDirection, renderRadialAxis, renderRingAxis,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -441,4 +482,4 @@ renderDirection = function(graph, config, radarCallback) {
 module.exports = PolarPlot;
 
 
-},{"./event-emitter":2}]},{},[1])
+},{"./event-emitter":3}]},{},[2])

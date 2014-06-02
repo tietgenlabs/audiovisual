@@ -58,3 +58,19 @@ svg.bar-chart .section {
   fill: #AAA;
   opacity: 0.1;
 }
+
+/* Audiogram
+ * -------------------------------------- */
+svg.audiogram .domain {
+  shape-rendering: crispEdges;
+  fill: none;
+  stroke: #000;
+}
+svg.audiogram .axis text {
+  font-size: 10px;
+}
+svg.audiogram .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
