@@ -271,6 +271,27 @@ MergeablePolarPlots = (function() {
     return _results;
   };
 
+  MergeablePolarPlots.prototype.radial = function(_arg) {
+    var data, id, label, leftRadial, rightRadial;
+    id = _arg.id, label = _arg.label, data = _arg.data;
+    rightRadial = this.rightPlot.radial({
+      id: id,
+      label: label,
+      data: data.right
+    });
+    leftRadial = this.leftPlot.radial({
+      id: id,
+      label: label,
+      data: data.left
+    });
+    return {
+      render: function() {
+        rightRadial.render();
+        return leftRadial.render();
+      }
+    };
+  };
+
   return MergeablePolarPlots;
 
 })();
