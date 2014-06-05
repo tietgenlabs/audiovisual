@@ -56,11 +56,12 @@ module.exports = Audiogram;
 window.AV = {
   PolarPlot: require('./polar-plot'),
   HorizontalBarChart: require('./horizontal-bar-chart'),
-  Audiogram: require('./audiogram')
+  Audiogram: require('./audiogram'),
+  MergeablePolarPlots: require('./mergeable-polar-plots')
 };
 
 
-},{"./audiogram":1,"./horizontal-bar-chart":4,"./polar-plot":5}],3:[function(require,module,exports){
+},{"./audiogram":1,"./horizontal-bar-chart":4,"./mergeable-polar-plots":5,"./polar-plot":6}],3:[function(require,module,exports){
 var EventEmitter,
   __slice = [].slice;
 
@@ -250,6 +251,34 @@ module.exports = HorizontalBarChart;
 
 
 },{}],5:[function(require,module,exports){
+var MergeablePolarPlots;
+
+MergeablePolarPlots = (function() {
+  function MergeablePolarPlots(id, options) {
+    this.id = id;
+    this.options = options;
+  }
+
+  MergeablePolarPlots.prototype.draw = function(labels) {
+    var plot, _i, _len, _ref, _results;
+    _ref = ['rightPlot', 'leftPlot'];
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      plot = _ref[_i];
+      this[plot] = new AV.PolarPlot(this.id, this.options);
+      _results.push(this[plot].draw(labels));
+    }
+    return _results;
+  };
+
+  return MergeablePolarPlots;
+
+})();
+
+module.exports = MergeablePolarPlots;
+
+
+},{}],6:[function(require,module,exports){
 var EventEmitter, PolarPlot, renderCircles, renderDirection, renderRadialAxis, renderRingAxis,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };

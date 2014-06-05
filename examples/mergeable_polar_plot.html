@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="coffee-script.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
+    <script src="../audiovisual.js"></script>
+    <link rel="stylesheet" href="../audiovisual.css" />
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,100,300,500,700" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: helvetica;
+        background: #fafafa;
+      }
+      #plot {
+        padding: 20px 100px;
+      }
+      #frequency_1000,
+      .freq_1000 {
+        fill: #4D90FE;
+        fill-opacity: 0.3;
+        stroke: #4D90FE;
+      }
+      #frequency_4000,
+      .freq_4000 {
+        fill: #CB4437;
+        fill-opacity: 0.3;
+        stroke: #CB4437;
+      }
+      .point_1000 {
+        stroke: #4D90FE;
+      }
+      .point_4000 {
+        stroke: #CB4437;
+      }
+      .bar-chart .label_4000 {
+        fill: #CB4437;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .label_1000 {
+        fill: #4D90FE;
+        fill-opacity: 0.3;
+      }
+      .bar-chart .end_cap.label_4000 {
+        stroke-width: 3px;
+        stroke: #CB4437;
+      }
+      .bar-chart .end_cap.label_1000 {
+        stroke-width: 3px;
+        stroke: #4D90FE;
+      }
+      ul {
+        margin-bottom: -80px;
+      }
+      li {
+        height: 100px;
+        width: 300px;
+        display: inline-block;
+      }
+      a {
+        display: block;
+        border: 2px solid #CCC;
+        background: #EEE;
+        color: #000;
+        padding: 20px 100px;
+        text-decoration: none;
+        font-size: 18px;
+      }
+      #fre_1000.on {
+        background: rgba(77, 144, 254, 0.3);
+        border-color: #4D90FE;
+      }
+      #fre_4000.on {
+        background: rgba(203, 68, 55, 0.3);
+        border-color: #CB4437;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="plots"></div>
+    <br />
+    <script type="text/coffeescript">
+      mergeablePolarPlots = new AV.MergeablePolarPlots '#plots',
+        circleLabelOffsetY: -5
+        padding: 30
+        zeroOffset: 90
+        axisLabelOffsetX: 20
+        axisLabelRotationOffset: 90
+        outerPaddingForAxisLabels: 20
+        directionalLine: false
+
+      mergeablePolarPlots.draw
+        ringLabels: [
+          {label: '', value: -25}
+          {label: '-15', value: -15}
+          {label: '-10', value: -10}
+          {label: '-5', value: -5}
+          {label: '0', value: 0}
+          {label: '5', value: 5}
+        ]
+        axisLabels: [
+          {label: '0', axis: 0}
+          {label: '', axis: 20}
+          {label: '45', axis: 45}
+          {label: '', axis: 67}
+          {label: '90', axis: 90}
+          {label: '', axis: 113}
+          {label: '135', axis: 135}
+          {label: '', axis: 157}
+          {label: '180', axis: 180}
+          {label: '', axis: 203}
+          {label: '225', axis: 225}
+          {label: '', axis: 247}
+          {label: '270', axis: 270}
+          {label: '', axis: 293}
+          {label: '315', axis: 315}
+          {label: '', axis: 337}
+        ]
+    </script>
+  </body>
+</html>
