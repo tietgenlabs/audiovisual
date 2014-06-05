@@ -74,3 +74,13 @@ svg.audiogram .axis line {
   stroke: #000;
   shape-rendering: crispEdges;
 }
+svg.audiogram .right {
+  fill: blue;
+}
+svg.audiogram .left {
+  fill: red;
+}
+svg.audiogram .grid .tick {
+  stroke: #CCC;
+  opacity: 0.7;
+}

@@ -19,16 +19,30 @@ Audiogram = (function() {
   }
 
   Audiogram.prototype.draw = function() {
-    var x, xAxis, y, yAxis;
-    x = d3.scale.linear().range([0, this.config.width - this.config.marginLeft]);
-    y = d3.scale.linear().range([this.config.height - this.config.marginTop, 0]);
-    xAxis = d3.svg.axis().scale(x).orient("bottom");
-    yAxis = d3.svg.axis().scale(y).orient("left");
-    y.domain([100, -10]);
-    x.domain([250, 8000]);
+    var xAxis, yAxis;
+    this.x = d3.scale.ordinal().domain([250, 500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000]).rangePoints([0, this.config.width - this.config.marginLeft]);
+    this.y = d3.scale.linear().domain([100, -10]).range([this.config.height - this.config.marginTop, 0]);
+    xAxis = d3.svg.axis().scale(this.x).orient("bottom").tickValues([250, 500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000]);
+    yAxis = d3.svg.axis().scale(this.y).orient("left");
     this.graph = d3.select("body").append("svg").attr("width", this.config.width + this.config.marginLeft).attr("height", this.config.height + this.config.marginTop).attr('class', 'audiogram').append("g").attr("transform", "translate(30, 30)");
     this.graph.append("g").attr("class", "x axis").attr("transform", "translate(0, " + (this.config.height - this.config.marginTop) + ")").call(xAxis);
-    return this.graph.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("dB");
+    this.graph.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("dB");
+    this.graph.append("g").attr("class", "grid").call(d3.svg.axis().scale(this.y).ticks(9).tickSize(this.config.width - this.config.marginLeft, 0).tickFormat("").orient("right"));
+    return this.graph.append("g").attr("class", "grid").call(d3.svg.axis().scale(this.x).ticks(10).tickSize(-(this.config.height - this.config.marginTop), 0).tickFormat("").orient("top"));
+  };
+
+  Audiogram.prototype.plot = function(data) {
+    return this.graph.selectAll('.point').data(data).enter().append("circle").attr("r", 3).attr("cy", (function(_this) {
+      return function(d) {
+        return _this.y(d.db);
+      };
+    })(this)).attr("cx", (function(_this) {
+      return function(d) {
+        return _this.x(d.frequency);
+      };
+    })(this)).attr("class", function(d) {
+      return "point " + d.side + " " + d.type;
+    });
   };
 
   return Audiogram;

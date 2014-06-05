@@ -10,20 +10,18 @@ class Audiogram
     (@config[key] = value for key, value of options)
 
   draw: ->
-    x = d3.scale.linear().range([0, @config.width - @config.marginLeft])
+    @x = d3.scale.ordinal().domain([250, 500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000]).rangePoints([0, @config.width - @config.marginLeft])
 
-    y = d3.scale.linear().range([@config.height - @config.marginTop, 0])
+    @y = d3.scale.linear().domain([100, -10]).range([@config.height - @config.marginTop, 0])
 
     xAxis = d3.svg.axis()
-      .scale(x)
+      .scale(@x)
       .orient("bottom")
+      .tickValues([250, 500, 750, 1000, 1500, 2000, 3000, 4000, 6000, 8000])
 
     yAxis = d3.svg.axis()
-      .scale(y)
+      .scale(@y)
       .orient("left")
-
-    y.domain([100, -10])
-    x.domain([250, 8000])
 
     @graph = d3.select("body").append("svg")
       .attr("width", @config.width + @config.marginLeft)
@@ -46,5 +44,31 @@ class Audiogram
       .attr("dy", ".71em")
       .style("text-anchor", "end")
       .text("dB")
+
+    @graph.append("g")
+      .attr("class", "grid")
+      .call(d3.svg.axis().scale(@y)
+        .ticks(9)
+        .tickSize(@config.width - @config.marginLeft, 0)
+        .tickFormat("")
+        .orient("right"))
+
+    @graph.append("g")
+      .attr("class", "grid")
+      .call(d3.svg.axis().scale(@x)
+        .ticks(10)
+        .tickSize(-(@config.height - @config.marginTop), 0)
+        .tickFormat("")
+        .orient("top"))
+
+  plot: (data) ->
+    @graph.selectAll('.point')
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("r", 3)
+      .attr("cy", (d) => @y(d.db))
+      .attr("cx", (d) => @x(d.frequency))
+      .attr("class", (d) -> "point #{d.side} #{d.type}")
 
 module.exports = Audiogram

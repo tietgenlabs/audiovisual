@@ -15,8 +15,7 @@
         fill-opacity: 0.3;
         stroke: #4D90FE;
       }
-      #frequency_4000,
-      .freq_4000 {
+      .right {
         fill: #CB4437;
         fill-opacity: 0.3;
         stroke: #CB4437;
@@ -83,6 +82,28 @@
         outerPaddingForAxisLabels: 20
 
       audiogram.draw()
+      audiogram.plot [
+        {db: 15, frequency: 250, side: 'right', type: 'air_conduction'}
+        {db: 20, frequency: 250, side: 'left', type: 'air_conduction'}
+        {db: 15, frequency: 500, side: 'right', type: 'air_condition'}
+        {db: 20, frequency: 500, side: 'left', type: 'air_conduction'}
+        {db: 20, frequency: 750, side: 'right', type: 'air_condition'}
+        {db: 25, frequency: 750, side: 'left', type: 'air_condition'}
+        {db: 25, frequency: 1000, side: 'right', type: 'air_condition'}
+        {db: 30, frequency: 1000, side: 'left', type: 'air_conduction'}
+        {db: 30, frequency: 1500, side: 'right', type: 'air_conduction'}
+        {db: 40, frequency: 1500, side: 'left', type: 'air_conduction'}
+        {db: 50, frequency: 2000, side: 'right', type:'air_conduction'}
+        {db: 55, frequency: 2000, side: 'left', type: 'air_conduction'}
+        {db: 60, frequency: 3000, side: 'right', type: 'air_conduction'}
+        {db: 70, frequency: 3000, side: 'left', type: 'air_conduction'}
+        {db: 60, frequency: 4000, side: 'right', type: 'air_conduction'}
+        {db: 65, frequency: 4000, side: 'left', type: 'air_conduction'}
+        {db: 50, frequency: 6000, side: 'right', type: 'air_conduction'}
+        {db: 55, frequency: 6000, side: 'left', type: 'air_conduction'}
+        {db: 40, frequency: 8000, side: 'right', type: 'air_conduction'}
+        {db: 50, frequency: 8000, side: 'left', type: 'air_conduction'}
+      ]
     </script>
   </body>
 </html>
