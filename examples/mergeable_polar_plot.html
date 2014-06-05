@@ -79,6 +79,7 @@
   </head>
   <body>
     <div id="plots"></div>
+    <button id="merge">MERGE!</button>
     <br />
     <script type="text/coffeescript">
       mergeablePolarPlots = new AV.MergeablePolarPlots '#plots',
@@ -200,6 +201,9 @@
             {axis: 360, value: 0}
           ]
       radial.render()
+
+      document.getElementById('merge').addEventListener 'click', ->
+        mergeablePolarPlots.merge()
 
     </script>
   </body>

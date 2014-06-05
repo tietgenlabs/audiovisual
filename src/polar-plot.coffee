@@ -40,7 +40,7 @@ class PolarPlot extends EventEmitter
       .append("svg")
       .attr("width", @config.width)
       .attr("height", @config.height)
-      .attr("class", "polar-plot")
+      .attr("class", "polar-plot #{@config.className}")
       .append("g")
       .attr("transform", "translate(#{@config.width / 2}, #{@config.height / 2})")
 

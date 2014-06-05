@@ -257,39 +257,49 @@ MergeablePolarPlots = (function() {
   function MergeablePolarPlots(id, options) {
     this.id = id;
     this.options = options;
+    this.radialPairs = [];
   }
 
   MergeablePolarPlots.prototype.draw = function(labels) {
-    var plot, _i, _len, _ref, _results;
+    var options, plot, _i, _len, _ref, _results;
     _ref = ['rightPlot', 'leftPlot'];
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       plot = _ref[_i];
-      this[plot] = new AV.PolarPlot(this.id, this.options);
+      options = this.options;
+      options.className = plot;
+      this[plot] = new AV.PolarPlot(this.id, options);
       _results.push(this[plot].draw(labels));
     }
     return _results;
   };
 
   MergeablePolarPlots.prototype.radial = function(_arg) {
-    var data, id, label, leftRadial, rightRadial;
+    var data, id, label, radialPair;
     id = _arg.id, label = _arg.label, data = _arg.data;
-    rightRadial = this.rightPlot.radial({
+    radialPair = {};
+    radialPair.right = this.rightPlot.radial({
       id: id,
       label: label,
       data: data.right
     });
-    leftRadial = this.leftPlot.radial({
+    radialPair.left = this.leftPlot.radial({
       id: id,
       label: label,
       data: data.left
     });
+    this.radialPairs.push(radialPair);
     return {
       render: function() {
-        rightRadial.render();
-        return leftRadial.render();
+        radialPair.right.render();
+        return radialPair.left.render();
       }
     };
+  };
+
+  MergeablePolarPlots.prototype.merge = function() {
+    this.rightPlot;
+    return this.leftPlot;
   };
 
   return MergeablePolarPlots;
@@ -353,7 +363,7 @@ PolarPlot = (function(_super) {
     minRingValue = Math.min.apply(Math, values);
     maxRingValue = Math.max.apply(Math, values);
     this.customRadius = d3.scale.linear().domain([minRingValue, maxRingValue]).range([0, this.config.radius]);
-    this.graph = d3.select(this.id).append("svg").attr("width", this.config.width).attr("height", this.config.height).attr("class", "polar-plot").append("g").attr("transform", "translate(" + (this.config.width / 2) + ", " + (this.config.height / 2) + ")");
+    this.graph = d3.select(this.id).append("svg").attr("width", this.config.width).attr("height", this.config.height).attr("class", "polar-plot " + this.config.className).append("g").attr("transform", "translate(" + (this.config.width / 2) + ", " + (this.config.height / 2) + ")");
     renderCircles(this.graph, ringLabels, this.config, this.customRadius);
     renderRadialAxis(this.graph, axisLabels, this.config);
     renderRingAxis(this.graph, ringLabels, this.config, this.customRadius);

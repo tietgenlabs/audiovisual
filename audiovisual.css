@@ -35,6 +35,17 @@ svg.polar-plot .point {
   stroke-width: 2px;
   fill: #FFF;
 }
+svg.polar-plot.rightPlot,
+svg.polar-plot.leftPlot {
+  position: absolute;
+  top: 0;
+}
+svg.polar-plot.rightPlot {
+  right: 0;
+}
+svg.polar-plot.leftPlot {
+  left: 0;
+}
 
 /* Horizontal bar chart
  * -------------------------------------- */
