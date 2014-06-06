@@ -16,7 +16,7 @@ class MergeablePolarPlots
     plotEls = d3.selectAll('.rightPlot, .leftPlot')
     plotEls.style('-webkit-transition-duration', @config.mergeDuration)
 
-    plotEls = d3.selectAll('.axis-label, .ring-label')
+    plotEls = d3.selectAll('.axis-label, .ring-label, .ring')
     plotEls.style('-webkit-animation-duration', @config.mergeDuration)
 
   radial: ({id, label, data}) ->

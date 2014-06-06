@@ -48,9 +48,6 @@ svg.polar-plot.rightPlot {
 svg.polar-plot.leftPlot {
   left: 0;
 }
-svg.polar-plot.merge {
-  opacity: 0.6;
-}
 svg.polar-plot.rightPlot.merge {
   right: 50%;
 }
@@ -59,21 +56,49 @@ svg.polar-plot.leftPlot.merge {
 }
 svg.polar-plot.merge .axis-label,
 svg.polar-plot.merge .ring-label {
-  -webkit-animation: merge-labels;
+  animation: merge-text;
+  -webkit-animation: merge-text;
+}
+svg.polar-plot.merge .ring {
+  animation: merge-graph;
+  -webkit-animation: merge-graph;
 }
 svg.polar-plot.unmerge .axis-label,
 svg.polar-plot.unmerge .ring-label {
-  -webkit-animation: unmerge-labels;
+  animation: unmerge-text;
+  -webkit-animation: unmerge-text;
+}
+svg.polar-plot.unmerge .ring {
+  animation: unmerge-graph;
+  -webkit-animation: unmerge-graph;
 }
 
-@-webkit-keyframes merge-labels {
+@keyframes merge-text {
   0%   { opacity: 1; }
   25%   { opacity: 0; }
   90%   { opacity: 0; }
   100% { opacity: 1; }
 }
-@-webkit-keyframes unmerge-labels {
+@-webkit-keyframes merge-text {
+  0%   { opacity: 1; }
+  25%   { opacity: 0; }
+  90%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes unmerge-text {
   0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-webkit-keyframes unmerge-text {
+  0%, 40% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-webkit-keyframes merge-graph {
+  0%, 100% { opacity: 1; }
+  25%, 60% { opacity: 0; }
+}
+@-webkit-keyframes unmerge-graph {
+  0%, 20% { opacity: 0; }
   100% { opacity: 1; }
 }
 

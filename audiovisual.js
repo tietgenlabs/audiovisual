@@ -280,7 +280,7 @@ MergeablePolarPlots = (function() {
     }
     plotEls = d3.selectAll('.rightPlot, .leftPlot');
     plotEls.style('-webkit-transition-duration', this.config.mergeDuration);
-    plotEls = d3.selectAll('.axis-label, .ring-label');
+    plotEls = d3.selectAll('.axis-label, .ring-label, .ring');
     return plotEls.style('-webkit-animation-duration', this.config.mergeDuration);
   };
 
