@@ -120,8 +120,10 @@ class PolarPlot extends EventEmitter
     radialGroup = @radialsGroup.append("g")
 
     render: =>
-      radial = radialGroup.append("path")
-        .datum(data)
+      radial = radialGroup.selectAll("path")
+        .data([data])
+        .enter()
+        .append("svg:path")
         .attr("class", "radial radial_#{label}")
         .attr("id", id)
         .attr("d", line)
@@ -133,6 +135,15 @@ class PolarPlot extends EventEmitter
         .attr("class", "point point_#{label}")
 
       @datasets[datasetIndex].visible = true
+
+    update: (data) =>
+      radial
+        .data([data])
+        .transition()
+          .duration(2000)
+          .ease("linear")
+          .attr("stroke-dashoffset", 0)
+        .attr("d", line)
 
     remove: =>
       radial.remove()

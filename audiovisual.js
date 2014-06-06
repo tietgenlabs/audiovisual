@@ -275,45 +275,182 @@ MergeablePolarPlots = (function() {
   };
 
   MergeablePolarPlots.prototype.radial = function(_arg) {
-    var data, id, label, radialPair;
+    var data, id, label, leftRadial, radialPair, rightRadial;
     id = _arg.id, label = _arg.label, data = _arg.data;
-    radialPair = {};
-    radialPair.right = this.rightPlot.radial({
+    radialPair = {
+      right: {},
+      left: {}
+    };
+    rightRadial = this.rightPlot.radial({
       id: id,
       label: label,
       data: data.right
     });
-    radialPair.left = this.leftPlot.radial({
+    radialPair.right.radial = rightRadial;
+    radialPair.right.data = data.right;
+    leftRadial = this.leftPlot.radial({
       id: id,
       label: label,
       data: data.left
     });
+    radialPair.left.radial = leftRadial;
+    radialPair.left.data = data.left;
     this.radialPairs.push(radialPair);
     return {
       render: function() {
-        radialPair.right.render();
-        return radialPair.left.render();
+        radialPair.right.radial.render();
+        return radialPair.left.radial.render();
       }
     };
   };
 
   MergeablePolarPlots.prototype.merge = function() {
-    var middle, plotEls;
+    var data, middle, plotEls, radialPair, _i, _len, _ref, _results;
     plotEls = d3.selectAll('.rightPlot, .leftPlot');
     plotEls.classed("merge", true);
     plotEls.classed("unmerge", false);
     middle = d3.select('.rightPlot').style('width').replace('px', '') / 2;
     d3.select('.rightPlot').style('margin-right', -middle);
-    return d3.select('.leftPlot').style('margin-left', -middle);
+    d3.select('.leftPlot').style('margin-left', -middle);
+    _ref = this.radialPairs;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      radialPair = _ref[_i];
+      data = [
+        {
+          axis: 0,
+          value: 0
+        }, {
+          axis: 10,
+          value: 1.5
+        }, {
+          axis: 20,
+          value: 3.2
+        }, {
+          axis: 30,
+          value: 4.6
+        }, {
+          axis: 40,
+          value: 4.5
+        }, {
+          axis: 50,
+          value: 2.6
+        }, {
+          axis: 60,
+          value: 0.5
+        }, {
+          axis: 70,
+          value: -0.4
+        }, {
+          axis: 80,
+          value: -1.1
+        }, {
+          axis: 90,
+          value: -2.6
+        }, {
+          axis: 100,
+          value: -3.7
+        }, {
+          axis: 110,
+          value: -3.5
+        }, {
+          axis: 120,
+          value: -2.3
+        }, {
+          axis: 130,
+          value: -1.1
+        }, {
+          axis: 140,
+          value: -0.6
+        }, {
+          axis: 150,
+          value: -0.6
+        }, {
+          axis: 160,
+          value: -0.7
+        }, {
+          axis: 170,
+          value: -1.4
+        }, {
+          axis: 180,
+          value: -3.1
+        }, {
+          axis: 190,
+          value: -3.9
+        }, {
+          axis: 200,
+          value: -5.0
+        }, {
+          axis: 210,
+          value: -7.4
+        }, {
+          axis: 220,
+          value: -7.5
+        }, {
+          axis: 230,
+          value: -11.5
+        }, {
+          axis: 240,
+          value: -13.4
+        }, {
+          axis: 250,
+          value: -9.6
+        }, {
+          axis: 260,
+          value: -13.7
+        }, {
+          axis: 270,
+          value: -12.4
+        }, {
+          axis: 280,
+          value: -14.0
+        }, {
+          axis: 290,
+          value: -11.6
+        }, {
+          axis: 300,
+          value: -8.7
+        }, {
+          axis: 310,
+          value: -8.8
+        }, {
+          axis: 320,
+          value: -7.4
+        }, {
+          axis: 330,
+          value: -6.3
+        }, {
+          axis: 340,
+          value: -4.3
+        }, {
+          axis: 350,
+          value: -2.0
+        }, {
+          axis: 360,
+          value: 0
+        }
+      ];
+      radialPair.right.radial.update(data);
+      _results.push(radialPair.left.radial.update(data));
+    }
+    return _results;
   };
 
   MergeablePolarPlots.prototype.unmerge = function() {
-    var plotEls;
+    var plotEls, radialPair, _i, _len, _ref, _results;
     plotEls = d3.selectAll('.rightPlot, .leftPlot');
     plotEls.classed("unmerge", true);
     plotEls.classed("merge", false);
     d3.select('.rightPlot').style('margin-right', 0);
-    return d3.select('.leftPlot').style('margin-left', 0);
+    d3.select('.leftPlot').style('margin-left', 0);
+    _ref = this.radialPairs;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      radialPair = _ref[_i];
+      radialPair.right.radial.update(radialPair.right.data);
+      _results.push(radialPair.left.radial.update(radialPair.left.data));
+    }
+    return _results;
   };
 
   return MergeablePolarPlots;
@@ -485,7 +622,7 @@ PolarPlot = (function(_super) {
     return {
       render: (function(_this) {
         return function() {
-          radial = radialGroup.append("path").datum(data).attr("class", "radial radial_" + label).attr("id", id).attr("d", line);
+          radial = radialGroup.selectAll("path").data([data]).enter().append("svg:path").attr("class", "radial radial_" + label).attr("id", id).attr("d", line);
           pointMarker = radialGroup.selectAll("circle.point").data([
             {
               value: 0,
@@ -493,6 +630,11 @@ PolarPlot = (function(_super) {
             }
           ]).enter().append("circle").attr("class", "point point_" + label);
           return _this.datasets[datasetIndex].visible = true;
+        };
+      })(this),
+      update: (function(_this) {
+        return function(data) {
+          return radial.data([data]).transition().duration(2000).ease("linear").attr("stroke-dashoffset", 0).attr("d", line);
         };
       })(this),
       remove: (function(_this) {
