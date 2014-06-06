@@ -86,13 +86,17 @@
     <div id="plots"></div>
     <script type="text/coffeescript">
       mergeablePolarPlots = new AV.MergeablePolarPlots '#plots',
-        circleLabelOffsetY: -5
-        padding: 30
-        zeroOffset: 90
-        axisLabelOffsetX: 20
-        axisLabelRotationOffset: 90
-        outerPaddingForAxisLabels: 20
-        directionalLine: false
+        options:
+          mergeDuration: 1000
+        plotOptions:
+          circleLabelOffsetY: -5
+          padding: 30
+          zeroOffset: 90
+          axisLabelOffsetX: 20
+          axisLabelRotationOffset: 90
+          outerPaddingForAxisLabels: 20
+          directionalLine: false
+          updateDuration: 1000
 
       mergeablePolarPlots.draw
         ringLabels: [

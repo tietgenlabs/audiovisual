@@ -251,27 +251,37 @@ module.exports = HorizontalBarChart;
 
 
 },{}],5:[function(require,module,exports){
-var MergeablePolarPlots;
+var MergeablePolarPlots, maxMerge, minMerge;
 
 MergeablePolarPlots = (function() {
-  function MergeablePolarPlots(id, options) {
+  function MergeablePolarPlots(id, _arg) {
+    var key, options, value;
     this.id = id;
-    this.options = options;
+    options = _arg.options, this.plotOptions = _arg.plotOptions;
+    this.config = {
+      mergeDuration: 2000
+    };
+    for (key in options) {
+      value = options[key];
+      this.config[key] = value;
+    }
     this.radialPairs = [];
   }
 
   MergeablePolarPlots.prototype.draw = function(labels) {
-    var options, plot, _i, _len, _ref, _results;
+    var options, plot, plotEls, _i, _len, _ref;
     _ref = ['rightPlot', 'leftPlot'];
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       plot = _ref[_i];
-      options = this.options;
+      options = this.plotOptions;
       options.className = plot;
       this[plot] = new AV.PolarPlot(this.id, options);
-      _results.push(this[plot].draw(labels));
+      this[plot].draw(labels);
     }
-    return _results;
+    plotEls = d3.selectAll('.rightPlot, .leftPlot');
+    plotEls.style('-webkit-transition-duration', this.config.mergeDuration);
+    plotEls = d3.selectAll('.axis-label, .ring-label');
+    return plotEls.style('-webkit-animation-duration', this.config.mergeDuration);
   };
 
   MergeablePolarPlots.prototype.radial = function(_arg) {
@@ -304,9 +314,13 @@ MergeablePolarPlots = (function() {
     };
   };
 
-  MergeablePolarPlots.prototype.merge = function() {
+  MergeablePolarPlots.prototype.merge = function(technique) {
     var data, middle, plotEls, radialPair, _i, _len, _ref, _results;
+    if (technique == null) {
+      technique = 'min';
+    }
     plotEls = d3.selectAll('.rightPlot, .leftPlot');
+    plotEls.style('-webkit-animation-duration', this.config.mergeDuration);
     plotEls.classed("merge", true);
     plotEls.classed("unmerge", false);
     middle = d3.select('.rightPlot').style('width').replace('px', '') / 2;
@@ -316,120 +330,14 @@ MergeablePolarPlots = (function() {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       radialPair = _ref[_i];
-      data = [
-        {
-          axis: 0,
-          value: 0
-        }, {
-          axis: 10,
-          value: 1.5
-        }, {
-          axis: 20,
-          value: 3.2
-        }, {
-          axis: 30,
-          value: 4.6
-        }, {
-          axis: 40,
-          value: 4.5
-        }, {
-          axis: 50,
-          value: 2.6
-        }, {
-          axis: 60,
-          value: 0.5
-        }, {
-          axis: 70,
-          value: -0.4
-        }, {
-          axis: 80,
-          value: -1.1
-        }, {
-          axis: 90,
-          value: -2.6
-        }, {
-          axis: 100,
-          value: -3.7
-        }, {
-          axis: 110,
-          value: -3.5
-        }, {
-          axis: 120,
-          value: -2.3
-        }, {
-          axis: 130,
-          value: -1.1
-        }, {
-          axis: 140,
-          value: -0.6
-        }, {
-          axis: 150,
-          value: -0.6
-        }, {
-          axis: 160,
-          value: -0.7
-        }, {
-          axis: 170,
-          value: -1.4
-        }, {
-          axis: 180,
-          value: -3.1
-        }, {
-          axis: 190,
-          value: -3.9
-        }, {
-          axis: 200,
-          value: -5.0
-        }, {
-          axis: 210,
-          value: -7.4
-        }, {
-          axis: 220,
-          value: -7.5
-        }, {
-          axis: 230,
-          value: -11.5
-        }, {
-          axis: 240,
-          value: -13.4
-        }, {
-          axis: 250,
-          value: -9.6
-        }, {
-          axis: 260,
-          value: -13.7
-        }, {
-          axis: 270,
-          value: -12.4
-        }, {
-          axis: 280,
-          value: -14.0
-        }, {
-          axis: 290,
-          value: -11.6
-        }, {
-          axis: 300,
-          value: -8.7
-        }, {
-          axis: 310,
-          value: -8.8
-        }, {
-          axis: 320,
-          value: -7.4
-        }, {
-          axis: 330,
-          value: -6.3
-        }, {
-          axis: 340,
-          value: -4.3
-        }, {
-          axis: 350,
-          value: -2.0
-        }, {
-          axis: 360,
-          value: 0
+      data = (function() {
+        switch (technique) {
+          case 'min':
+            return minMerge(radialPair.right.data, radialPair.left.data);
+          case 'max':
+            return maxMerge(radialPair.right.data, radialPair.left.data);
         }
-      ];
+      })();
       radialPair.right.radial.update(data);
       _results.push(radialPair.left.radial.update(data));
     }
@@ -456,6 +364,32 @@ MergeablePolarPlots = (function() {
   return MergeablePolarPlots;
 
 })();
+
+minMerge = function(rightData, leftData) {
+  var i, _i, _ref, _results;
+  _results = [];
+  for (i = _i = 0, _ref = rightData.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    if (rightData[i].value < leftData[i].value) {
+      _results.push(rightData[i]);
+    } else {
+      _results.push(leftData[i]);
+    }
+  }
+  return _results;
+};
+
+maxMerge = function(rightData, leftData) {
+  var i, _i, _ref, _results;
+  _results = [];
+  for (i = _i = 0, _ref = rightData.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    if (rightData[i].value > leftData[i].value) {
+      _results.push(rightData[i]);
+    } else {
+      _results.push(leftData[i]);
+    }
+  }
+  return _results;
+};
 
 module.exports = MergeablePolarPlots;
 
@@ -485,7 +419,8 @@ PolarPlot = (function(_super) {
       height: 500,
       directionalLine: true,
       directionalRotation: true,
-      directionLineDegree: 0
+      directionLineDegree: 0,
+      updateDuration: 2000
     };
     for (key in options) {
       value = options[key];
@@ -634,7 +569,7 @@ PolarPlot = (function(_super) {
       })(this),
       update: (function(_this) {
         return function(data) {
-          return radial.data([data]).transition().duration(2000).ease("linear").attr("stroke-dashoffset", 0).attr("d", line);
+          return radial.data([data]).transition().duration(_this.config.updateDuration).ease("linear").attr("stroke-dashoffset", 0).attr("d", line);
         };
       })(this),
       remove: (function(_this) {

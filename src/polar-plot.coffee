@@ -16,6 +16,7 @@ class PolarPlot extends EventEmitter
       directionalLine: true
       directionalRotation: true
       directionLineDegree: 0
+      updateDuration: 2000
 
     (@config[key] = value for key, value of options)
 
@@ -140,7 +141,7 @@ class PolarPlot extends EventEmitter
       radial
         .data([data])
         .transition()
-          .duration(2000)
+          .duration(@config.updateDuration)
           .ease("linear")
           .attr("stroke-dashoffset", 0)
         .attr("d", line)

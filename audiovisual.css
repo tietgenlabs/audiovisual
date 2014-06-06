@@ -39,7 +39,8 @@ svg.polar-plot.rightPlot,
 svg.polar-plot.leftPlot {
   position: absolute;
   top: 0;
-  -webkit-transition: all 2s ease;
+  -webkit-transition: all;
+  -webkit-transition: all;
 }
 svg.polar-plot.rightPlot {
   right: 0;
@@ -58,23 +59,21 @@ svg.polar-plot.leftPlot.merge {
 }
 svg.polar-plot.merge .axis-label,
 svg.polar-plot.merge .ring-label {
-  -webkit-animation: merge-labels 2.5s;
+  -webkit-animation: merge-labels;
 }
 svg.polar-plot.unmerge .axis-label,
 svg.polar-plot.unmerge .ring-label {
-  -webkit-animation: unmerge-labels 2.5s;
+  -webkit-animation: unmerge-labels;
 }
 
 @-webkit-keyframes merge-labels {
   0%   { opacity: 1; }
   25%   { opacity: 0; }
-  70%   { opacity: 0; }
+  90%   { opacity: 0; }
   100% { opacity: 1; }
 }
 @-webkit-keyframes unmerge-labels {
   0%   { opacity: 0; }
-  25%   { opacity: 0; }
-  70%   { opacity: 0; }
   100% { opacity: 1; }
 }
 
