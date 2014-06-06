@@ -28,7 +28,22 @@ class MergeablePolarPlots
       radialPair.left.render()
 
   merge: ->
-    @rightPlot
-    @leftPlot
+    plotEls = d3.selectAll('.rightPlot, .leftPlot')
+    plotEls.classed("merge", true)
+    plotEls.classed("unmerge", false)
+
+    # assuming that the plots have identical widths...
+    middle = d3.select('.rightPlot').style('width').replace('px', '') / 2
+
+    d3.select('.rightPlot').style('margin-right', -middle)
+    d3.select('.leftPlot').style('margin-left', -middle)
+
+  unmerge: ->
+    plotEls = d3.selectAll('.rightPlot, .leftPlot')
+    plotEls.classed("unmerge", true)
+    plotEls.classed("merge", false)
+
+    d3.select('.rightPlot').style('margin-right', 0)
+    d3.select('.leftPlot').style('margin-left', 0)
 
 module.exports = MergeablePolarPlots

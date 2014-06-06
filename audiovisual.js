@@ -298,8 +298,22 @@ MergeablePolarPlots = (function() {
   };
 
   MergeablePolarPlots.prototype.merge = function() {
-    this.rightPlot;
-    return this.leftPlot;
+    var middle, plotEls;
+    plotEls = d3.selectAll('.rightPlot, .leftPlot');
+    plotEls.classed("merge", true);
+    plotEls.classed("unmerge", false);
+    middle = d3.select('.rightPlot').style('width').replace('px', '') / 2;
+    d3.select('.rightPlot').style('margin-right', -middle);
+    return d3.select('.leftPlot').style('margin-left', -middle);
+  };
+
+  MergeablePolarPlots.prototype.unmerge = function() {
+    var plotEls;
+    plotEls = d3.selectAll('.rightPlot, .leftPlot');
+    plotEls.classed("unmerge", true);
+    plotEls.classed("merge", false);
+    d3.select('.rightPlot').style('margin-right', 0);
+    return d3.select('.leftPlot').style('margin-left', 0);
   };
 
   return MergeablePolarPlots;

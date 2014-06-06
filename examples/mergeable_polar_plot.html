@@ -13,8 +13,9 @@
         font-family: helvetica;
         background: #fafafa;
       }
-      #plot {
+      #plots {
         padding: 20px 100px;
+        position: relative;
       }
       #frequency_1000,
       .freq_1000 {
@@ -78,9 +79,11 @@
     </style>
   </head>
   <body>
-    <div id="plots"></div>
     <button id="merge">MERGE!</button>
     <br />
+    <br />
+    <br />
+    <div id="plots"></div>
     <script type="text/coffeescript">
       mergeablePolarPlots = new AV.MergeablePolarPlots '#plots',
         circleLabelOffsetY: -5
@@ -202,8 +205,14 @@
           ]
       radial.render()
 
+      merged = false
       document.getElementById('merge').addEventListener 'click', ->
-        mergeablePolarPlots.merge()
+        if merged
+          mergeablePolarPlots.unmerge()
+          merged = false
+        else
+          mergeablePolarPlots.merge()
+          merged = true
 
     </script>
   </body>

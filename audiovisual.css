@@ -39,12 +39,43 @@ svg.polar-plot.rightPlot,
 svg.polar-plot.leftPlot {
   position: absolute;
   top: 0;
+  -webkit-transition: all 2s ease;
 }
 svg.polar-plot.rightPlot {
   right: 0;
 }
 svg.polar-plot.leftPlot {
   left: 0;
+}
+svg.polar-plot.merge {
+  opacity: 0.6;
+}
+svg.polar-plot.rightPlot.merge {
+  right: 50%;
+}
+svg.polar-plot.leftPlot.merge {
+  left: 50%;
+}
+svg.polar-plot.merge .axis-label,
+svg.polar-plot.merge .ring-label {
+  -webkit-animation: merge-labels 2.5s;
+}
+svg.polar-plot.unmerge .axis-label,
+svg.polar-plot.unmerge .ring-label {
+  -webkit-animation: unmerge-labels 2.5s;
+}
+
+@-webkit-keyframes merge-labels {
+  0%   { opacity: 1; }
+  25%   { opacity: 0; }
+  70%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-webkit-keyframes unmerge-labels {
+  0%   { opacity: 0; }
+  25%   { opacity: 0; }
+  70%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 /* Horizontal bar chart
