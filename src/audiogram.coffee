@@ -66,7 +66,7 @@ class Audiogram
       .data(data)
       .enter()
       .append("circle")
-      .attr("r", 3)
+      .attr("r", 5)
       .attr("cy", (d) => @y(d.db))
       .attr("cx", (d) => @x(d.frequency))
       .attr("class", (d) -> "point #{d.side} #{d.type}")

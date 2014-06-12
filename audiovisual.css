@@ -40,7 +40,6 @@ svg.polar-plot.leftPlot {
   position: absolute;
   top: 0;
   -webkit-transition: all;
-  -webkit-transition: all;
 }
 svg.polar-plot.rightPlot {
   right: 0;
@@ -72,36 +71,70 @@ svg.polar-plot.unmerge .ring {
   animation: unmerge-graph;
   -webkit-animation: unmerge-graph;
 }
-
 @keyframes merge-text {
-  0%   { opacity: 1; }
-  25%   { opacity: 0; }
-  90%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @-webkit-keyframes merge-text {
-  0%   { opacity: 1; }
-  25%   { opacity: 0; }
-  90%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @keyframes unmerge-text {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @-webkit-keyframes unmerge-text {
-  0%, 40% { opacity: 0; }
-  100% { opacity: 1; }
+  0%,
+  40% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @-webkit-keyframes merge-graph {
-  0%, 100% { opacity: 1; }
-  25%, 60% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  60% {
+    opacity: 0;
+  }
 }
 @-webkit-keyframes unmerge-graph {
-  0%, 20% { opacity: 0; }
-  100% { opacity: 1; }
+  0%,
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-
 /* Horizontal bar chart
  * -------------------------------------- */
 svg.bar-chart .axis-label {
@@ -117,6 +150,12 @@ svg.bar-chart .line {
   stroke: #CCC;
   stroke-width: 1px;
 }
+svg.bar-chart .bar {
+  fill-opacity: 0.3;
+}
+svg.bar-chart .end_cap {
+  stroke-width: 3px;
+}
 svg.bar-chart .label {
   display: none;
 }
@@ -124,7 +163,6 @@ svg.bar-chart .section {
   fill: #AAA;
   opacity: 0.1;
 }
-
 /* Audiogram
  * -------------------------------------- */
 svg.audiogram .domain {
@@ -149,4 +187,58 @@ svg.audiogram .left {
 svg.audiogram .grid .tick {
   stroke: #CCC;
   opacity: 0.7;
+}
+/* Plot Colors
+ * -------------------------------------- */
+svg .color-coded:nth-child( 1) .radial {
+  fill: #378127;
+  stroke: #378127;
+}
+svg .color-coded:nth-child( 1) .point {
+  stroke: #378127;
+}
+svg .color-coded:nth-child( 1) .bar {
+  fill: #378127;
+}
+svg .color-coded:nth-child( 1) .end_cap {
+  stroke: #378127;
+}
+svg .color-coded:nth-child( 2) .radial {
+  fill: #592699;
+  stroke: #592699;
+}
+svg .color-coded:nth-child( 2) .point {
+  stroke: #592699;
+}
+svg .color-coded:nth-child( 2) .bar {
+  fill: #592699;
+}
+svg .color-coded:nth-child( 2) .end_cap {
+  stroke: #592699;
+}
+svg .color-coded:nth-child( 3) .radial {
+  fill: #d254de;
+  stroke: #d254de;
+}
+svg .color-coded:nth-child( 3) .point {
+  stroke: #d254de;
+}
+svg .color-coded:nth-child( 3) .bar {
+  fill: #d254de;
+}
+svg .color-coded:nth-child( 3) .end_cap {
+  stroke: #d254de;
+}
+svg .color-coded:nth-child( 4) .radial {
+  fill: #fab937;
+  stroke: #fab937;
+}
+svg .color-coded:nth-child( 4) .point {
+  stroke: #fab937;
+}
+svg .color-coded:nth-child( 4) .bar {
+  fill: #fab937;
+}
+svg .color-coded:nth-child( 4) .end_cap {
+  stroke: #fab937;
 }

@@ -1,0 +1,194 @@
+/* Directional polar plot
+ * -------------------------------------- */
+svg.polar-plot {
+  .ring-label {
+    font-size: 14px;
+    text-anchor: middle;
+    z-index: 10;
+    fill: #999;
+    font-weight: bold;
+  }
+  .ring {
+    fill: #CCC;
+  }
+  .ring.last-child {
+    stroke: #CCC;
+  }
+  .axis {
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 1px;
+    z-index: 1;
+  }
+  .axis-label {
+    font-size: 15px;
+    text-anchor: middle;
+    fill: #999;
+  }
+  .direction {
+    stroke: yellow;
+    stroke-width: 3px;
+  }
+  .radial {
+    stroke-width: 3px;
+    fill-opacity: 0.3;
+  }
+  .point {
+    stroke-width: 2px;
+    fill: #FFF;
+  }
+  &.rightPlot,
+  &.leftPlot {
+    position: absolute;
+    top: 0;
+    -webkit-transition: all;
+    -webkit-transition: all;
+  }
+  &.rightPlot {
+    right: 0;
+  }
+  &.leftPlot {
+    left: 0;
+  }
+  &.rightPlot.merge {
+    right: 50%;
+  }
+  &.leftPlot.merge {
+    left: 50%;
+  }
+  &.merge .axis-label,
+  &.merge .ring-label {
+    animation: merge-text;
+    -webkit-animation: merge-text;
+  }
+  &.merge .ring {
+    animation: merge-graph;
+    -webkit-animation: merge-graph;
+  }
+  &.unmerge .axis-label,
+  &.unmerge .ring-label {
+    animation: unmerge-text;
+    -webkit-animation: unmerge-text;
+  }
+  &.unmerge .ring {
+    animation: unmerge-graph;
+    -webkit-animation: unmerge-graph;
+  }
+
+  @keyframes merge-text {
+    0%   { opacity: 1; }
+    25%   { opacity: 0; }
+    90%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @-webkit-keyframes merge-text {
+    0%   { opacity: 1; }
+    25%   { opacity: 0; }
+    90%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes unmerge-text {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @-webkit-keyframes unmerge-text {
+    0%, 40% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @-webkit-keyframes merge-graph {
+    0%, 100% { opacity: 1; }
+    25%, 60% { opacity: 0; }
+  }
+  @-webkit-keyframes unmerge-graph {
+    0%, 20% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+}
+
+
+/* Horizontal bar chart
+ * -------------------------------------- */
+svg.bar-chart {
+  .axis-label {
+    fill: #999;
+    font-size: 12px;
+    text-anchor: middle;
+  }
+  .chart {
+    stroke: #AAA;
+    fill: #EEE;
+  }
+  .line {
+    stroke: #CCC;
+    stroke-width: 1px;
+  }
+  .bar {
+    fill-opacity: 0.3;
+  }
+  .end_cap {
+    stroke-width: 3px;
+  }
+  .label {
+    display: none;
+  }
+  .section {
+    fill: #AAA;
+    opacity: 0.1;
+  }
+}
+
+/* Audiogram
+ * -------------------------------------- */
+svg.audiogram {
+  .domain {
+    shape-rendering: crispEdges;
+    fill: none;
+    stroke: #000;
+  }
+  .axis text {
+    font-size: 10px;
+  }
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+  .right {
+    fill: blue;
+  }
+  .left {
+    fill: red;
+  }
+  .grid .tick {
+    stroke: #CCC;
+    opacity: 0.7;
+  }
+}
+
+/* Plot Colors
+ * -------------------------------------- */
+@colors: #378127, #592699, #D254DE, #FAB937;
+
+.color-loop (@index) when (@index > 0) {
+  .color-loop(@index - 1);
+  @color: extract(@colors, @index);
+
+  .color-coded:nth-child(@{index}) {
+    .radial {
+      fill: @color;
+      stroke: @color;
+    }
+    .point {
+      stroke: @color;
+    }
+    .bar {
+      fill: @color;
+    }
+    .end_cap {
+      stroke: @color;
+    }
+  }
+}
+
+svg {
+  .color-loop(4);
+}

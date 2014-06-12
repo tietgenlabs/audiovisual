@@ -1,6 +1,8 @@
 body {
   background: #fafafa;
   font-family: 'Roboto', sans-serif;
+  text-align: center;
+  margin-top: 40px;
 }
 h1 {
   font-family: 'Raleway', sans-serif;

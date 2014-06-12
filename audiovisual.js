@@ -32,7 +32,7 @@ Audiogram = (function() {
   };
 
   Audiogram.prototype.plot = function(data) {
-    return this.graph.selectAll('.point').data(data).enter().append("circle").attr("r", 3).attr("cy", (function(_this) {
+    return this.graph.selectAll('.point').data(data).enter().append("circle").attr("r", 5).attr("cy", (function(_this) {
       return function(d) {
         return _this.y(d.db);
       };
@@ -203,12 +203,12 @@ HorizontalBarChart = (function() {
   HorizontalBarChart.prototype.bars = function(data) {
     var bars, lines;
     this.yFunc = d3.scale.ordinal().domain(data).rangeBands([0, this.config.height]);
-    bars = this.graph.selectAll("rect.bar").data(data).enter().append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
+    bars = this.graph.append("g").selectAll("rect.bar").data(data).enter().append("g").classed('color-coded', true).append("rect").attr("x", this.config.yLabelOffset).attr("class", (function(_this) {
       return function(d, i) {
         return "bar label_" + _this.yAxisLabels[i];
       };
     })(this)).attr("y", this.yFunc).attr("height", this.yFunc.rangeBand()).attr("width", this.xFunc);
-    lines = this.graph.selectAll("line.end_cap").data(data).enter().append("line").attr("class", (function(_this) {
+    lines = this.graph.append("g").selectAll("line.end_cap").data(data).enter().append("g").classed('color-coded', true).append("line").attr("class", (function(_this) {
       return function(d, i) {
         return "end_cap label_" + _this.yAxisLabels[i];
       };
@@ -553,7 +553,7 @@ PolarPlot = (function(_super) {
         return d.axis * (Math.PI / 180);
       };
     })(this)).interpolate(this.config.radialInpolation);
-    radialGroup = this.radialsGroup.append("g");
+    radialGroup = this.radialsGroup.append("g").classed("color-coded", true);
     return {
       render: (function(_this) {
         return function() {

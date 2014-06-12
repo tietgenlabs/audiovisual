@@ -118,7 +118,9 @@ class PolarPlot extends EventEmitter
       .angle((d) => d.axis * (Math.PI / 180))
       .interpolate(@config.radialInpolation)
 
-    radialGroup = @radialsGroup.append("g")
+    radialGroup = @radialsGroup
+      .append("g")
+      .classed("color-coded", true)
 
     render: =>
       radial = radialGroup.selectAll("path")
