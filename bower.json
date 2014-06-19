@@ -1,0 +1,24 @@
+{
+  "name": "audiovisual",
+  "version": "0.5.0",
+  "authors": [
+    "Roy Kolak <roy.kolak@gmail.com>"
+  ],
+  "description": "Visualization library for auditory needs, powered by D3",
+  "main": [
+    "audiovisual.js",
+    "audiovisual.css"
+  ],
+  "license": "MIT",
+  "private": true,
+  "appPath": "./",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "src",
+    "examples"
+  ],
+  "dependencies": {
+    "d3": "~3.4.8"
+  }
+}
