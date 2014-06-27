@@ -1,7 +1,7 @@
 {
   "name": "audiovisual",
   "description": "Auditory visuals for Teitgen Labs",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "scripts": {
     "start": "node_modules/.bin/watchify -t coffeeify --extension='.coffee' src/audiovisual.coffee -o audiovisual.js"
   },
