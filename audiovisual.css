@@ -190,55 +190,91 @@ svg.audiogram .grid .tick {
 }
 /* Plot Colors
  * -------------------------------------- */
+.graph-wrapper .color-coded:nth-child( 1) .radial,
 svg .color-coded:nth-child( 1) .radial {
   fill: #378127;
   stroke: #378127;
 }
+.graph-wrapper .color-coded:nth-child( 1) .point,
 svg .color-coded:nth-child( 1) .point {
   stroke: #378127;
 }
+.graph-wrapper .color-coded:nth-child( 1) .bar,
 svg .color-coded:nth-child( 1) .bar {
   fill: #378127;
 }
+.graph-wrapper .color-coded:nth-child( 1) .end_cap,
 svg .color-coded:nth-child( 1) .end_cap {
   stroke: #378127;
 }
+.graph-wrapper .color-coded:nth-child( 1) a.label.active,
+svg .color-coded:nth-child( 1) a.label.active {
+  border-color: #378127;
+  background: #e7f7e3;
+}
+.graph-wrapper .color-coded:nth-child( 2) .radial,
 svg .color-coded:nth-child( 2) .radial {
   fill: #592699;
   stroke: #592699;
 }
+.graph-wrapper .color-coded:nth-child( 2) .point,
 svg .color-coded:nth-child( 2) .point {
   stroke: #592699;
 }
+.graph-wrapper .color-coded:nth-child( 2) .bar,
 svg .color-coded:nth-child( 2) .bar {
   fill: #592699;
 }
+.graph-wrapper .color-coded:nth-child( 2) .end_cap,
 svg .color-coded:nth-child( 2) .end_cap {
   stroke: #592699;
 }
+.graph-wrapper .color-coded:nth-child( 2) a.label.active,
+svg .color-coded:nth-child( 2) a.label.active {
+  border-color: #592699;
+  background: #f8f5fc;
+}
+.graph-wrapper .color-coded:nth-child( 3) .radial,
 svg .color-coded:nth-child( 3) .radial {
   fill: #d254de;
   stroke: #d254de;
 }
+.graph-wrapper .color-coded:nth-child( 3) .point,
 svg .color-coded:nth-child( 3) .point {
   stroke: #d254de;
 }
+.graph-wrapper .color-coded:nth-child( 3) .bar,
 svg .color-coded:nth-child( 3) .bar {
   fill: #d254de;
 }
+.graph-wrapper .color-coded:nth-child( 3) .end_cap,
 svg .color-coded:nth-child( 3) .end_cap {
   stroke: #d254de;
 }
+.graph-wrapper .color-coded:nth-child( 3) a.label.active,
+svg .color-coded:nth-child( 3) a.label.active {
+  border-color: #d254de;
+  background: #ffffff;
+}
+.graph-wrapper .color-coded:nth-child( 4) .radial,
 svg .color-coded:nth-child( 4) .radial {
   fill: #fab937;
   stroke: #fab937;
 }
+.graph-wrapper .color-coded:nth-child( 4) .point,
 svg .color-coded:nth-child( 4) .point {
   stroke: #fab937;
 }
+.graph-wrapper .color-coded:nth-child( 4) .bar,
 svg .color-coded:nth-child( 4) .bar {
   fill: #fab937;
 }
+.graph-wrapper .color-coded:nth-child( 4) .end_cap,
 svg .color-coded:nth-child( 4) .end_cap {
   stroke: #fab937;
+}
+.graph-wrapper .color-coded:nth-child( 4) a.label.active,
+svg .color-coded:nth-child( 4) a.label.active {
+  border-color: #fab937;
+  background: #ffffff;
 }
