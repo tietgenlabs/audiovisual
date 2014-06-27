@@ -186,9 +186,13 @@ svg.audiogram {
     .end_cap {
       stroke: @color;
     }
+    a.label.active {
+      border-color: @color;
+      background: lighten(@color, 60%);
+    }
   }
 }
 
-svg {
+.graph-wrapper, svg {
   .color-loop(4);
 }
