@@ -45,6 +45,9 @@ class MergeablePolarPlots
     render: ->
       radialPair.right.radial.render()
       radialPair.left.radial.render()
+    remove: ->
+      radialPair.right.radial.remove()
+      radialPair.left.radial.remove()
 
   merge: (technique = 'min') ->
     plotEls = d3.selectAll('.rightPlot, .leftPlot')

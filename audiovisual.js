@@ -310,6 +310,10 @@ MergeablePolarPlots = (function() {
       render: function() {
         radialPair.right.radial.render();
         return radialPair.left.radial.render();
+      },
+      remove: function() {
+        radialPair.right.radial.remove();
+        return radialPair.left.radial.remove();
       }
     };
   };
