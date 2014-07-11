@@ -140,17 +140,19 @@ class PolarPlot extends EventEmitter
       @datasets[datasetIndex].visible = true
 
     update: (data) =>
-      radial
-        .data([data])
-        .transition()
-          .duration(@config.updateDuration)
-          .ease("linear")
-          .attr("stroke-dashoffset", 0)
-        .attr("d", line)
+      if radial
+        radial
+          .data([data])
+          .transition()
+            .duration(@config.updateDuration)
+            .ease("linear")
+            .attr("stroke-dashoffset", 0)
+          .attr("d", line)
 
     remove: =>
-      radial.remove()
-      @datasets[datasetIndex].visible = false
+      if radial
+        radial.remove()
+        @datasets[datasetIndex].visible = false
 
 renderCircles = (graph, labels, config, customRadius) ->
   levels = graph.selectAll(".levels")

@@ -573,13 +573,17 @@ PolarPlot = (function(_super) {
       })(this),
       update: (function(_this) {
         return function(data) {
-          return radial.data([data]).transition().duration(_this.config.updateDuration).ease("linear").attr("stroke-dashoffset", 0).attr("d", line);
+          if (radial) {
+            return radial.data([data]).transition().duration(_this.config.updateDuration).ease("linear").attr("stroke-dashoffset", 0).attr("d", line);
+          }
         };
       })(this),
       remove: (function(_this) {
         return function() {
-          radial.remove();
-          return _this.datasets[datasetIndex].visible = false;
+          if (radial) {
+            radial.remove();
+            return _this.datasets[datasetIndex].visible = false;
+          }
         };
       })(this)
     };
