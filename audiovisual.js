@@ -55,13 +55,14 @@ module.exports = Audiogram;
 },{}],2:[function(require,module,exports){
 window.AV = {
   PolarPlot: require('./polar-plot'),
+  PolarPlotHeatmap: require('./polar-plot-heatmap'),
   HorizontalBarChart: require('./horizontal-bar-chart'),
   Audiogram: require('./audiogram'),
   MergeablePolarPlots: require('./mergeable-polar-plots')
 };
 
 
-},{"./audiogram":1,"./horizontal-bar-chart":4,"./mergeable-polar-plots":5,"./polar-plot":6}],3:[function(require,module,exports){
+},{"./audiogram":1,"./horizontal-bar-chart":4,"./mergeable-polar-plots":5,"./polar-plot":7,"./polar-plot-heatmap":6}],3:[function(require,module,exports){
 var EventEmitter,
   __slice = [].slice;
 
@@ -399,6 +400,75 @@ module.exports = MergeablePolarPlots;
 
 
 },{}],6:[function(require,module,exports){
+var PolarPlotHeatmap;
+
+PolarPlotHeatmap = (function() {
+  function PolarPlotHeatmap(id, _arg) {
+    var key, options, value;
+    this.id = id;
+    options = _arg.options, this.plotOptions = _arg.plotOptions;
+    for (key in options) {
+      value = options[key];
+      this.config[key] = value;
+    }
+    this.config || (this.config = {});
+    this.config.showRings = false;
+    this.plotOptions.className = 'heatmap';
+  }
+
+  PolarPlotHeatmap.prototype.draw = function(labels) {
+    this.plot = new AV.PolarPlot(this.id, this.plotOptions);
+    this.plot.draw(labels);
+    return this.radialsGroup = this.plot.graph.append("g");
+  };
+
+  PolarPlotHeatmap.prototype.heatmap = function(_arg) {
+    var color, data, radialGroup;
+    data = _arg.data;
+    radialGroup = this.radialsGroup.append("g").classed("color-coded", true);
+    color = d3.scale.linear().domain([-45, -40, -35, -30, -25, -20, -15, -10, -5, 0]).range(['#F8F732', '#F9C433', '#D2BBF9', '#7CBF7B', '#51B7A4', '#3FA4CA', '#2484D5', '#0F5CDD', '#342A87'].reverse());
+    debugger;
+    return {
+      render: (function(_this) {
+        return function() {
+          var formattedData, i, item, pointMarker, value, _i, _j, _len, _len1, _ref, _results;
+          formattedData = [];
+          _results = [];
+          for (_i = 0, _len = data.length; _i < _len; _i++) {
+            item = data[_i];
+            _ref = item.values;
+            for (i = _j = 0, _len1 = _ref.length; _j < _len1; i = ++_j) {
+              value = _ref[i];
+              formattedData.push({
+                point: i,
+                value: value,
+                axis: item.axis
+              });
+            }
+            _results.push(pointMarker = radialGroup.selectAll("circle.point").data(formattedData).enter().append("ellipse").style("fill", function(d) {
+              return color(d.value);
+            }).attr("transform", function(d) {
+              return "rotate(" + (item.axis + (_this.plot.config.zeroOffset * 2)) + ")";
+            }).attr("ry", 3).attr("rx", function(d) {
+              return 2 + (d.point / 4);
+            }).attr("cy", function(d) {
+              return _this.plot.customRadius(d.point);
+            }).attr("cx", 0));
+          }
+          return _results;
+        };
+      })(this)
+    };
+  };
+
+  return PolarPlotHeatmap;
+
+})();
+
+module.exports = PolarPlotHeatmap;
+
+
+},{}],7:[function(require,module,exports){
 var EventEmitter, PolarPlot, renderCircles, renderDirection, renderRadialAxis, renderRingAxis,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -424,7 +494,8 @@ PolarPlot = (function(_super) {
       directionalLine: true,
       directionalRotation: true,
       directionLineDegree: 0,
-      updateDuration: 2000
+      updateDuration: 2000,
+      showRings: true
     };
     for (key in options) {
       value = options[key];
@@ -454,9 +525,11 @@ PolarPlot = (function(_super) {
     maxRingValue = Math.max.apply(Math, values);
     this.customRadius = d3.scale.linear().domain([minRingValue, maxRingValue]).range([0, this.config.radius]);
     this.graph = d3.select(this.id).append("svg").attr("width", this.config.width).attr("height", this.config.height).attr("class", "polar-plot " + this.config.className).append("g").attr("transform", "translate(" + (this.config.width / 2) + ", " + (this.config.height / 2) + ")");
-    renderCircles(this.graph, ringLabels, this.config, this.customRadius);
     renderRadialAxis(this.graph, axisLabels, this.config);
-    renderRingAxis(this.graph, ringLabels, this.config, this.customRadius);
+    if (this.config.showRings) {
+      renderCircles(this.graph, ringLabels, this.config, this.customRadius);
+      renderRingAxis(this.graph, ringLabels, this.config, this.customRadius);
+    }
     this.radialsGroup = this.graph.append("g");
     if (this.config.directionalLine) {
       direction = renderDirection(this.graph, this.config);

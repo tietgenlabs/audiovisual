@@ -17,6 +17,7 @@ class PolarPlot extends EventEmitter
       directionalRotation: true
       directionLineDegree: 0
       updateDuration: 2000
+      showRings: true
 
     (@config[key] = value for key, value of options)
 
@@ -45,9 +46,13 @@ class PolarPlot extends EventEmitter
       .append("g")
       .attr("transform", "translate(#{@config.width / 2}, #{@config.height / 2})")
 
-    renderCircles(@graph, ringLabels, @config, @customRadius)
+
     renderRadialAxis(@graph, axisLabels, @config)
-    renderRingAxis(@graph, ringLabels, @config, @customRadius)
+
+    if @config.showRings
+      renderCircles(@graph, ringLabels, @config, @customRadius)
+      renderRingAxis(@graph, ringLabels, @config, @customRadius)
+
     @radialsGroup = @graph.append("g")
 
     if @config.directionalLine
