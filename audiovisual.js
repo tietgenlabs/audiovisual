@@ -436,9 +436,9 @@ PolarPlotHeatmap = (function() {
           }).attr("transform", function(d) {
             return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
           }).attr("ry", 3).attr("rx", function(d) {
-            return 2 + (d.frequency / 4);
+            return 2 + (d.freqIndex / 4);
           }).attr("cy", function(d) {
-            return _this.plot.customRadius(d.frequency);
+            return _this.plot.customRadius(d.freqIndex);
           }).attr("cx", 0);
         };
       })(this)

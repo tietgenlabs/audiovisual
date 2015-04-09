@@ -34,8 +34,8 @@ class PolarPlotHeatmap
           "rotate(#{d.angle + (@plot.config.zeroOffset * 2)})"
         )
         .attr("ry", 3)
-        .attr("rx", (d) => 2 + (d.frequency / 4))
-        .attr("cy", (d) => @plot.customRadius(d.frequency))
+        .attr("rx", (d) => 2 + (d.freqIndex / 4))
+        .attr("cy", (d) => @plot.customRadius(d.freqIndex))
         .attr("cx", 0)
 
 module.exports = PolarPlotHeatmap
