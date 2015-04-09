@@ -427,7 +427,6 @@ PolarPlotHeatmap = (function() {
     data = _arg.data;
     radialGroup = this.radialsGroup.append("g").classed("color-coded", true);
     color = d3.scale.linear().domain([-45, -40, -35, -30, -25, -20, -15, -10, -5, 0]).range(['#F8F732', '#F9C433', '#D2BBF9', '#7CBF7B', '#51B7A4', '#3FA4CA', '#2484D5', '#0F5CDD', '#342A87'].reverse());
-    debugger;
     return {
       render: (function(_this) {
         return function() {
