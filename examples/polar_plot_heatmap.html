@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="coffee-script.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
+    <script src="../audiovisual.js"></script>
+    <script src="heatmap-data.js"></script>
+    <link rel="stylesheet" href="../audiovisual.css" />
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,100,300,500,700" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <br />
+    <br />
+    <div id="plot"></div>
+    <script type="text/coffeescript">
+      polarPlot = new AV.PolarPlotHeatmap '#plot',
+        plotOptions:
+          circleLabelOffsetY: -5
+          padding: 30
+          zeroOffset: 90
+          axisLabelOffsetX: 20
+          axisLabelRotationOffset: 90
+          outerPaddingForAxisLabels: 20
+          directionalLine: false
+          directionalRotation: false
+
+      polarPlot.draw
+        ringLabels: [
+          {label: '', value: 1}
+          {label: '', value: 2}
+          {label: '', value: 3}
+          {label: '', value: 4}
+          {label: '', value: 5}
+          {label: '', value: 6}
+          {label: '', value: 7}
+          {label: '', value: 8}
+          {label: '', value: 9}
+          {label: '', value: 10}
+          {label: '', value: 11}
+          {label: '', value: 12}
+          {label: '', value: 13}
+          {label: '', value: 14}
+          {label: '', value: 15}
+          {label: '', value: 16}
+          {label: '', value: 17}
+          {label: '', value: 18}
+          {label: '', value: 19}
+          {label: '', value: 20}
+          {label: '', value: 21}
+          {label: '', value: 22}
+          {label: '', value: 23}
+          {label: '', value: 24}
+          {label: '', value: 25}
+          {label: '', value: 26}
+          {label: '', value: 27}
+          {label: '', value: 28}
+          {label: '', value: 29}
+          {label: '', value: 30}
+          {label: '', value: 31}
+          {label: '', value: 32}
+          {label: '', value: 33}
+          {label: '', value: 34}
+          {label: '', value: 35}
+          {label: '', value: 36}
+          {label: '', value: 37}
+          {label: '', value: 38}
+          {label: '', value: 39}
+          {label: '', value: 40}
+          {label: '', value: 41}
+          {label: '', value: 42}
+          {label: '', value: 43}
+          {label: '', value: 44}
+          {label: '', value: 45}
+          {label: '', value: 46}
+          {label: '', value: 47}
+          {label: '', value: 48}
+          {label: '', value: 49}
+          {label: '', value: 50}
+        ]
+        axisLabels: [
+          {label: '0', axis: 0}
+          {label: '', axis: 20}
+          {label: '45', axis: 45}
+          {label: '', axis: 67}
+          {label: '90', axis: 90}
+          {label: '', axis: 113}
+          {label: '135', axis: 135}
+          {label: '', axis: 157}
+          {label: '180', axis: 180}
+          {label: '', axis: 203}
+          {label: '225', axis: 225}
+          {label: '', axis: 247}
+          {label: '270', axis: 270}
+          {label: '', axis: 293}
+          {label: '315', axis: 315}
+          {label: '', axis: 337}
+        ]
+
+      heatmap = polarPlot.heatmap data: heatmapData
+
+      heatmap.render()
+
+    </script>
+  </body>
+</html>
