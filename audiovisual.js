@@ -430,31 +430,16 @@ PolarPlotHeatmap = (function() {
     return {
       render: (function(_this) {
         return function() {
-          var formattedData, i, item, pointMarker, value, _i, _j, _len, _len1, _ref, _results;
-          formattedData = [];
-          _results = [];
-          for (_i = 0, _len = data.length; _i < _len; _i++) {
-            item = data[_i];
-            _ref = item.values;
-            for (i = _j = 0, _len1 = _ref.length; _j < _len1; i = ++_j) {
-              value = _ref[i];
-              formattedData.push({
-                point: i,
-                value: value,
-                axis: item.axis
-              });
-            }
-            _results.push(pointMarker = radialGroup.selectAll("circle.point").data(formattedData).enter().append("ellipse").style("fill", function(d) {
-              return color(d.value);
-            }).attr("transform", function(d) {
-              return "rotate(" + (item.axis + (_this.plot.config.zeroOffset * 2)) + ")";
-            }).attr("ry", 3).attr("rx", function(d) {
-              return 2 + (d.point / 4);
-            }).attr("cy", function(d) {
-              return _this.plot.customRadius(d.point);
-            }).attr("cx", 0));
-          }
-          return _results;
+          var pointMarker;
+          return pointMarker = radialGroup.selectAll("circle.point").data(data).enter().append("ellipse").style("fill", function(d) {
+            return color(d.value);
+          }).attr("transform", function(d) {
+            return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
+          }).attr("ry", 3).attr("rx", function(d) {
+            return 2 + (d.frequency / 4);
+          }).attr("cy", function(d) {
+            return _this.plot.customRadius(d.frequency);
+          }).attr("cx", 0);
         };
       })(this)
     };
