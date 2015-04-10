@@ -264,7 +264,7 @@ HRTF = (function(_super) {
   __extends(HRTF, _super);
 
   function HRTF(hrtfs) {
-    var FS, buffer, bufferChannelLeft, bufferChannelRight, hrtf, i, sample, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+    var FS, buffer, bufferChannelLeft, bufferChannelRight, hrtf, i, sample, _i, _j, _len, _len1, _ref, _ref1;
     this.hrtfs = hrtfs;
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.audioContext = new AudioContext();
@@ -279,11 +279,6 @@ HRTF = (function(_super) {
       for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
         sample = _ref1[i];
         bufferChannelLeft[i] = hrtf.fir_coeffs_left[i];
-      }
-      _ref2 = hrtf.fir_coeffs_right;
-      for (i = _k = 0, _len2 = _ref2.length; _k < _len2; i = ++_k) {
-        sample = _ref2[i];
-        bufferChannelRight[i] = hrtf.fir_coeffs_right[i];
       }
       hrtf.buffer = buffer;
     }
@@ -300,7 +295,7 @@ HRTF = (function(_super) {
   };
 
   HRTF.prototype.angle = function(degree) {
-    return this.convolver.buffer = this.hrtfs[degree].buffer;
+    return this.convolver.buffer = this.hrtfs[degree / 2].buffer;
   };
 
   return HRTF;

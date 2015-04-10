@@ -15,8 +15,8 @@ class HRTF extends EventEmitter
       for sample, i in hrtf.fir_coeffs_left
         bufferChannelLeft[i] = hrtf.fir_coeffs_left[i]
 
-      for sample, i in hrtf.fir_coeffs_right
-        bufferChannelRight[i] = hrtf.fir_coeffs_right[i]
+      # for sample, i in hrtf.fir_coeffs_right
+      #   bufferChannelRight[i] = hrtf.fir_coeffs_right[i]
 
       hrtf.buffer = buffer
 
