@@ -33,7 +33,7 @@ class PolarPlotHeatmap
         .attr("transform", (d) =>
           "rotate(#{d.angle + (@plot.config.zeroOffset * 2)})"
         )
-        .attr("ry", 3)
+        .attr("ry", 1)
         .attr("rx", (d) => 2 + (d.freqIndex / 4))
         .attr("cy", (d) => @plot.customRadius(d.freqIndex))
         .attr("cx", 0)
