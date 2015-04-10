@@ -1,18 +1,52 @@
-class PolarPlotHeatmap
+EventEmitter = require './event-emitter'
+
+class PolarPlotHeatmap extends EventEmitter
   constructor: (@id, {options, @plotOptions}) ->
+    super()
+
+    @config =
+      radarRotationSpeed: 10000
+      showRings: false
+
     (@config[key] = value for key, value of options)
-    @config ||= {}
-    @config.showRings = false
 
     @plotOptions.className = 'heatmap'
+    @plotOptions.directionalLine = false
+    @plotOptions.directionalRotation = false
+
+    @degreeCallbacks = []
+    @currentAngle = 0;
 
   draw: (labels) ->
     @plot = new AV.PolarPlot @id, @plotOptions
     @plot.draw(labels)
+    @plot.on 'degreeChange', (data, duration) =>
+      @emit 'degreeChange', data, duration
 
     @radialsGroup = @plot.graph.append("g")
 
-  heatmap: ({data}) ->
+    if @config.directionalLine
+      @direction = renderDirection(@plot.graph, @plot.config)
+
+  dataAtDegree: (degree) ->
+    out = []
+    degree = Math.round(degree)
+
+    for item in @data
+      out.push(item) if item.angle == degree
+    out
+
+  changeAngle: (angle) ->
+    @direction
+      .attr("transform", =>
+        "rotate(#{angle - @plot.config.zeroOffset})"
+      )
+
+    @emit 'degreeChange', @dataAtDegree(angle)
+
+    @currentAngle = angle
+
+  heatmap: ({@data}) ->
     radialGroup = @radialsGroup
       .append("g")
       .classed("color-coded", true)
@@ -23,7 +57,7 @@ class PolarPlotHeatmap
 
     render: =>
       pointMarker = radialGroup.selectAll("circle.point")
-        .data(data)
+        .data(@data)
         .enter()
         .append("ellipse")
 
@@ -38,4 +72,11 @@ class PolarPlotHeatmap
         .attr("cy", (d) => @plot.customRadius(d.freqIndex))
         .attr("cx", 0)
 
+renderDirection = (graph, config, radarCallback = ->) ->
+  graph.append("line")
+    .attr("x2", config.radius - config.axisLineLengthOffset)
+    .attr("class", "direction")
+    .attr("transform", ->
+      "rotate(#{config.directionLineDegree - config.zeroOffset})"
+    )
 module.exports = PolarPlotHeatmap

@@ -58,11 +58,13 @@ window.AV = {
   PolarPlotHeatmap: require('./polar-plot-heatmap'),
   HorizontalBarChart: require('./horizontal-bar-chart'),
   Audiogram: require('./audiogram'),
-  MergeablePolarPlots: require('./mergeable-polar-plots')
+  MergeablePolarPlots: require('./mergeable-polar-plots'),
+  HRTF: require('./hrtf'),
+  SpatialSound: require('./spatial-sound')
 };
 
 
-},{"./audiogram":1,"./horizontal-bar-chart":4,"./mergeable-polar-plots":5,"./polar-plot":7,"./polar-plot-heatmap":6}],3:[function(require,module,exports){
+},{"./audiogram":1,"./horizontal-bar-chart":4,"./hrtf":5,"./mergeable-polar-plots":6,"./polar-plot":8,"./polar-plot-heatmap":7,"./spatial-sound":9}],3:[function(require,module,exports){
 var EventEmitter,
   __slice = [].slice;
 
@@ -252,6 +254,63 @@ module.exports = HorizontalBarChart;
 
 
 },{}],5:[function(require,module,exports){
+var EventEmitter, HRTF,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('./event-emitter');
+
+HRTF = (function(_super) {
+  __extends(HRTF, _super);
+
+  function HRTF(hrtfs) {
+    var FS, buffer, bufferChannelLeft, bufferChannelRight, hrtf, i, sample, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+    this.hrtfs = hrtfs;
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    this.audioContext = new AudioContext();
+    FS = 44100;
+    _ref = this.hrtfs;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      hrtf = _ref[_i];
+      buffer = this.audioContext.createBuffer(2, FS, FS);
+      bufferChannelLeft = buffer.getChannelData(0);
+      bufferChannelRight = buffer.getChannelData(1);
+      _ref1 = hrtf.fir_coeffs_left;
+      for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+        sample = _ref1[i];
+        bufferChannelLeft[i] = hrtf.fir_coeffs_left[i];
+      }
+      _ref2 = hrtf.fir_coeffs_right;
+      for (i = _k = 0, _len2 = _ref2.length; _k < _len2; i = ++_k) {
+        sample = _ref2[i];
+        bufferChannelRight[i] = hrtf.fir_coeffs_right[i];
+      }
+      hrtf.buffer = buffer;
+    }
+  }
+
+  HRTF.prototype.connect = function(audioElement) {
+    var source;
+    source = this.audioContext.createMediaElementSource(audioElement);
+    source.buffer = this.buffer;
+    this.convolver = this.audioContext.createConvolver();
+    this.convolver.buffer = this.hrtfs[0].buffer;
+    source.connect(this.convolver);
+    return this.convolver.connect(this.audioContext.destination);
+  };
+
+  HRTF.prototype.angle = function(degree) {
+    return this.convolver.buffer = this.hrtfs[degree].buffer;
+  };
+
+  return HRTF;
+
+})(EventEmitter);
+
+module.exports = HRTF;
+
+
+},{"./event-emitter":3}],6:[function(require,module,exports){
 var MergeablePolarPlots, maxMerge, minMerge;
 
 MergeablePolarPlots = (function() {
@@ -399,39 +458,84 @@ maxMerge = function(rightData, leftData) {
 module.exports = MergeablePolarPlots;
 
 
-},{}],6:[function(require,module,exports){
-var PolarPlotHeatmap;
+},{}],7:[function(require,module,exports){
+var EventEmitter, PolarPlotHeatmap, renderDirection,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-PolarPlotHeatmap = (function() {
+EventEmitter = require('./event-emitter');
+
+PolarPlotHeatmap = (function(_super) {
+  __extends(PolarPlotHeatmap, _super);
+
   function PolarPlotHeatmap(id, _arg) {
     var key, options, value;
     this.id = id;
     options = _arg.options, this.plotOptions = _arg.plotOptions;
+    PolarPlotHeatmap.__super__.constructor.call(this);
+    this.config = {
+      radarRotationSpeed: 10000,
+      showRings: false
+    };
     for (key in options) {
       value = options[key];
       this.config[key] = value;
     }
-    this.config || (this.config = {});
-    this.config.showRings = false;
     this.plotOptions.className = 'heatmap';
+    this.plotOptions.directionalLine = false;
+    this.plotOptions.directionalRotation = false;
+    this.degreeCallbacks = [];
+    this.currentAngle = 0;
   }
 
   PolarPlotHeatmap.prototype.draw = function(labels) {
     this.plot = new AV.PolarPlot(this.id, this.plotOptions);
     this.plot.draw(labels);
-    return this.radialsGroup = this.plot.graph.append("g");
+    this.plot.on('degreeChange', (function(_this) {
+      return function(data, duration) {
+        return _this.emit('degreeChange', data, duration);
+      };
+    })(this));
+    this.radialsGroup = this.plot.graph.append("g");
+    if (this.config.directionalLine) {
+      return this.direction = renderDirection(this.plot.graph, this.plot.config);
+    }
+  };
+
+  PolarPlotHeatmap.prototype.dataAtDegree = function(degree) {
+    var item, out, _i, _len, _ref;
+    out = [];
+    degree = Math.round(degree);
+    _ref = this.data;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      item = _ref[_i];
+      if (item.angle === degree) {
+        out.push(item);
+      }
+    }
+    return out;
+  };
+
+  PolarPlotHeatmap.prototype.changeAngle = function(angle) {
+    this.direction.attr("transform", (function(_this) {
+      return function() {
+        return "rotate(" + (angle - _this.plot.config.zeroOffset) + ")";
+      };
+    })(this));
+    this.emit('degreeChange', this.dataAtDegree(angle));
+    return this.currentAngle = angle;
   };
 
   PolarPlotHeatmap.prototype.heatmap = function(_arg) {
-    var color, data, radialGroup;
-    data = _arg.data;
+    var color, radialGroup;
+    this.data = _arg.data;
     radialGroup = this.radialsGroup.append("g").classed("color-coded", true);
     color = d3.scale.linear().domain([-45, -40, -35, -30, -25, -20, -15, -10, -5, 0]).range(['#F8F732', '#F9C433', '#D2BBF9', '#7CBF7B', '#51B7A4', '#3FA4CA', '#2484D5', '#0F5CDD', '#342A87'].reverse());
     return {
       render: (function(_this) {
         return function() {
           var pointMarker;
-          return pointMarker = radialGroup.selectAll("circle.point").data(data).enter().append("ellipse").style("fill", function(d) {
+          return pointMarker = radialGroup.selectAll("circle.point").data(_this.data).enter().append("ellipse").style("fill", function(d) {
             return color(d.value);
           }).attr("transform", function(d) {
             return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
@@ -447,12 +551,21 @@ PolarPlotHeatmap = (function() {
 
   return PolarPlotHeatmap;
 
-})();
+})(EventEmitter);
+
+renderDirection = function(graph, config, radarCallback) {
+  if (radarCallback == null) {
+    radarCallback = function() {};
+  }
+  return graph.append("line").attr("x2", config.radius - config.axisLineLengthOffset).attr("class", "direction").attr("transform", function() {
+    return "rotate(" + (config.directionLineDegree - config.zeroOffset) + ")";
+  });
+};
 
 module.exports = PolarPlotHeatmap;
 
 
-},{}],7:[function(require,module,exports){
+},{"./event-emitter":3}],8:[function(require,module,exports){
 var EventEmitter, PolarPlot, renderCircles, renderDirection, renderRadialAxis, renderRingAxis,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -712,4 +825,8 @@ renderDirection = function(graph, config, radarCallback) {
 module.exports = PolarPlot;
 
 
-},{"./event-emitter":3}]},{},[2])
+},{"./event-emitter":3}],9:[function(require,module,exports){
+
+
+
+},{}]},{},[2])

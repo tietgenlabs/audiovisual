@@ -4,3 +4,5 @@ window.AV =
   HorizontalBarChart: require('./horizontal-bar-chart')
   Audiogram: require('./audiogram')
   MergeablePolarPlots: require('./mergeable-polar-plots')
+  HRTF: require('./hrtf')
+  SpatialSound: require('./spatial-sound')
