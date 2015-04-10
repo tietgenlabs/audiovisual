@@ -11,7 +11,7 @@ class HRTF extends EventEmitter
       buffer = @audioContext.createBuffer(2, FS, FS)
       bufferChannelLeft = buffer.getChannelData(0)
       bufferChannelRight = buffer.getChannelData(1)
-      
+
       for sample, i in hrtf.fir_coeffs_left
         bufferChannelLeft[i] = hrtf.fir_coeffs_left[i]
 
@@ -31,6 +31,6 @@ class HRTF extends EventEmitter
     @convolver.connect(@audioContext.destination)
 
   angle: (degree) ->
-    @convolver.buffer = @hrtfs[degree].buffer
+    @convolver.buffer = @hrtfs[degree/2].buffer
 
 module.exports = HRTF
