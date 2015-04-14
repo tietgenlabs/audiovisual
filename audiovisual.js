@@ -264,38 +264,169 @@ HRTF = (function(_super) {
   __extends(HRTF, _super);
 
   function HRTF(hrtfs) {
-    var FS, buffer, bufferChannelLeft, bufferChannelRight, hrtf, i, sample, _i, _j, _len, _len1, _ref, _ref1;
+    var FS, buffer, bufferChannelLeft, bufferChannelRight, hrtf, i, sample, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     this.hrtfs = hrtfs;
+    this.config = {
+      fadeTime: 50,
+      fadeStepSize: 0.1,
+      angleIncrement: 10
+    };
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.audioContext = new AudioContext();
     FS = 44100;
+    this.isPlaying1 = false;
+    this.isPlaying2 = false;
     _ref = this.hrtfs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       hrtf = _ref[_i];
       buffer = this.audioContext.createBuffer(2, FS, FS);
       bufferChannelLeft = buffer.getChannelData(0);
       bufferChannelRight = buffer.getChannelData(1);
-      _ref1 = hrtf.fir_coeffs_left;
+      _ref1 = hrtf.HRIR_left;
       for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
         sample = _ref1[i];
-        bufferChannelLeft[i] = hrtf.fir_coeffs_left[i];
+        bufferChannelLeft[i] = hrtf.HRIR_left[i];
+      }
+      _ref2 = hrtf.HRIR_right;
+      for (i = _k = 0, _len2 = _ref2.length; _k < _len2; i = ++_k) {
+        sample = _ref2[i];
+        bufferChannelRight[i] = hrtf.HRIR_right[i];
       }
       hrtf.buffer = buffer;
     }
   }
 
-  HRTF.prototype.connect = function(audioElement) {
-    var source;
-    source = this.audioContext.createMediaElementSource(audioElement);
-    source.buffer = this.buffer;
-    this.convolver = this.audioContext.createConvolver();
-    this.convolver.buffer = this.hrtfs[0].buffer;
-    source.connect(this.convolver);
-    return this.convolver.connect(this.audioContext.destination);
+  HRTF.prototype.loadAudioBuffer = function(audioBuffer, callback) {
+    return this.audioContext.decodeAudioData(audioBuffer, (function(_this) {
+      return function(buffer) {
+        _this.audioLength = buffer.duration;
+        _this.noiseBuffer = buffer;
+        return callback();
+      };
+    })(this));
   };
 
-  HRTF.prototype.angle = function(degree) {
-    return this.convolver.buffer = this.hrtfs[degree / 2].buffer;
+  HRTF.prototype.connect = function() {
+    var bufferSize, i, noiseSourceNode1, noiseSourceNode2, output, _i;
+    if (!this.noiseBuffer) {
+      this["static"] = true;
+      bufferSize = 2 * 44100;
+      this.noiseBuffer = this.audioContext.createBuffer(1, bufferSize, 44100);
+      output = this.noiseBuffer.getChannelData(0);
+      for (i = _i = 0; 0 <= bufferSize ? _i <= bufferSize : _i >= bufferSize; i = 0 <= bufferSize ? ++_i : --_i) {
+        output[i] = Math.random() * 2 - 1;
+      }
+    }
+    noiseSourceNode1 = this.audioContext.createBufferSource();
+    noiseSourceNode1.buffer = this.noiseBuffer;
+    noiseSourceNode1.loop = true;
+    this.source1 = noiseSourceNode1;
+    noiseSourceNode2 = this.audioContext.createBufferSource();
+    noiseSourceNode2.buffer = this.noiseBuffer;
+    noiseSourceNode2.loop = true;
+    this.source2 = noiseSourceNode2;
+    this.convolverIndex = 1;
+    this.convolverNode1 = this.audioContext.createConvolver();
+    this.convolverNode2 = this.audioContext.createConvolver();
+    this.convolverNode1.buffer = this.hrtfs[0].buffer;
+    this.convolverNode2.buffer = this.hrtfs[0].buffer;
+    this.gainNode1 = this.audioContext.createGain();
+    this.gainNode2 = this.audioContext.createGain();
+    this.convolverNode1.connect(this.gainNode1);
+    this.convolverNode2.connect(this.gainNode2);
+    this.gainNode1.connect(this.audioContext.destination);
+    this.gainNode2.connect(this.audioContext.destination);
+    this.convolver = this.audioContext.createConvolver();
+    return this.convolver.buffer = this.hrtfs[0].buffer;
+  };
+
+  HRTF.prototype.play = function() {
+    this.playTime = 0;
+    setInterval((function(_this) {
+      return function() {
+        _this.playTime += 1;
+        if (_this.playTime > _this.audioLength) {
+          return _this.playTime = 0;
+        }
+      };
+    })(this), 1000);
+    return this.newSource();
+  };
+
+  HRTF.prototype.angle = function(angle) {
+    var buffer;
+    buffer = this.hrtfs[Math.round(angle / this.config.angleIncrement)].buffer;
+    if (this.convolverIndex === 1) {
+      this.convolverNode1.buffer = buffer;
+      this.convolverIndex = 2;
+    } else {
+      this.convolverNode2.buffer = buffer;
+      this.convolverIndex = 1;
+    }
+    this.newSource();
+    return this.crossFade();
+  };
+
+  HRTF.prototype.crossFade = function() {
+    if (this.convolverIndex === 1) {
+      this.fadeOut(this.gainNode1, this.config.fadeStepSize, this.config.fadeTime);
+      return this.fadeIn(this.gainNode2, this.config.fadeStepSize, this.config.fadeTime);
+    } else {
+      this.fadeOut(this.gainNode2, this.config.fadeStepSize, this.config.fadeTime);
+      return this.fadeIn(this.gainNode1, this.config.fadeStepSize, this.config.fadeTime);
+    }
+  };
+
+  HRTF.prototype.newSource = function() {
+    var noiseSourceNode1, noiseSourceNode2;
+    if (this.convolverIndex === 1) {
+      noiseSourceNode2 = this.audioContext.createBufferSource();
+      this.source2 = noiseSourceNode2;
+      noiseSourceNode2.buffer = this.noiseBuffer;
+      noiseSourceNode2.loop = true;
+      noiseSourceNode2.connect(this.convolverNode2);
+      noiseSourceNode2.start(0, this.audioLength ? this.playTime : void 0);
+      return this.isPlaying2 = true;
+    } else {
+      noiseSourceNode1 = this.audioContext.createBufferSource();
+      this.source1 = noiseSourceNode1;
+      noiseSourceNode1.buffer = this.noiseBuffer;
+      noiseSourceNode1.loop = true;
+      noiseSourceNode1.connect(this.convolverNode1);
+      noiseSourceNode1.start(0, this.audioLength ? this.playTime : void 0);
+      return this.isPlaying1 = true;
+    }
+  };
+
+  HRTF.prototype.fadeIn = function(gainNode, fadeStepSize, fadeTime) {
+    var interval;
+    gainNode.gain.value = 0.0;
+    return interval = setInterval(function() {
+      gainNode.gain.value = Math.min(1.0, gainNode.gain.value + fadeStepSize);
+      if (gainNode.gain.value >= 1.0) {
+        return clearInterval(interval);
+      }
+    }, fadeTime * fadeStepSize);
+  };
+
+  HRTF.prototype.fadeOut = function(gainNode, fadeStepSize, fadeTime) {
+    var interval;
+    gainNode.gain.value = 1.0;
+    return interval = setInterval((function(_this) {
+      return function() {
+        gainNode.gain.value = Math.max(0.0, gainNode.gain.value - fadeStepSize);
+        if (gainNode.gain.value <= 0.0) {
+          clearInterval(interval);
+          if (_this.convolverIndex === 1 && _this.isPlaying1) {
+            _this.source1.stop(0);
+            return _this.isPlaying1 = false;
+          } else if (_this.convolverIndex === 2 && _this.isPlaying2) {
+            _this.source2.stop(0);
+            return _this.isPlaying2 = false;
+          }
+        }
+      };
+    })(this), fadeTime * fadeStepSize);
   };
 
   return HRTF;
@@ -469,8 +600,9 @@ PolarPlotHeatmap = (function(_super) {
     options = _arg.options, this.plotOptions = _arg.plotOptions;
     PolarPlotHeatmap.__super__.constructor.call(this);
     this.config = {
-      radarRotationSpeed: 10000,
-      showRings: false
+      radarRotationSpeed: 1000,
+      showRings: false,
+      angleIncrement: 15
     };
     for (key in options) {
       value = options[key];
@@ -512,13 +644,36 @@ PolarPlotHeatmap = (function(_super) {
   };
 
   PolarPlotHeatmap.prototype.changeAngle = function(angle) {
-    this.direction.attr("transform", (function(_this) {
-      return function() {
-        return "rotate(" + (angle - _this.plot.config.zeroOffset) + ")";
+    var previousAngle;
+    previousAngle = this.currentAngle - this.config.angleIncrement;
+    this.direction.transition().ease("linear").attrTween("transform", (function(_this) {
+      return function(d, i) {
+        var interpolate;
+        interpolate = d3.interpolate(previousAngle, angle);
+        return function(t) {
+          angle = interpolate(t);
+          return "rotate(" + (angle - _this.plot.config.zeroOffset) + ")";
+        };
       };
-    })(this));
-    this.emit('degreeChange', this.dataAtDegree(angle));
-    return this.currentAngle = angle;
+    })(this)).duration(this.config.radarRotationSpeed);
+    return this.emit('degreeChange', {
+      angle: angle
+    });
+  };
+
+  PolarPlotHeatmap.prototype.spin = function() {
+    setInterval((function(_this) {
+      return function() {
+        if (_this.currentAngle === 360) {
+          _this.currentAngle = _this.config.angleIncrement;
+        } else {
+          _this.currentAngle += _this.config.angleIncrement;
+        }
+        return _this.changeAngle(_this.currentAngle);
+      };
+    })(this), this.config.radarRotationSpeed);
+    this.currentAngle += this.config.angleIncrement;
+    return this.changeAngle(this.config.angleIncrement);
   };
 
   PolarPlotHeatmap.prototype.heatmap = function(_arg) {

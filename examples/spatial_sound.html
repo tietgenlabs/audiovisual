@@ -6,6 +6,7 @@
     <script src="../audiovisual.js"></script>
     <script src="gn_hrtf_fft_100x180.js"></script>
     <script src="gn_hrtfs.js"></script>
+    <script src="boley_hrtfs.js"></script>
     <link rel="stylesheet" href="../audiovisual.css" />
     <link href="http://fonts.googleapis.com/css?family=Raleway:400,100,300,500,700" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
@@ -14,21 +15,11 @@
   <body>
     <br />
     <br />
-
-    <audio id="audio">
-      <source src="scaled_english_female.wav" type="audio/wav"/>
-      Your browser does not support the audio element.
-    </audio>
-    <input type='text' id='degree' />
-    <button id='change_degree'>Change angle</button>
-
     <div id="plot"></div>
     <script type="text/coffeescript">
-      sound = document.getElementById("audio")
-      hrtf = new AV.HRTF(hrtfs)
-      hrtf.connect(sound)
 
-      sound.play()
+
+
 
       polarPlot = new AV.PolarPlotHeatmap '#plot',
         options:
@@ -168,15 +159,22 @@
 
       heatmap.render()
 
-      el = document.getElementById("change_degree");
-      el.addEventListener("click", ->
-        angle = document.getElementById('degree').value
-        polarPlot.changeAngle(angle)
-        hrtf.angle(angle);
-      , false);
+      hrtf = new AV.HRTF(data.HRTFs)
+
+      request = new XMLHttpRequest()
+      request.open('GET', 'scaled_english_female.wav', true)
+      request.responseType = 'arraybuffer'
+      request.onload = ->
+        hrtf.loadAudioBuffer request.response, ->
+          hrtf.connect()
+          hrtf.play()
+          polarPlot.spin()
+
+      request.send()
+
 
       polarPlot.on 'degreeChange', (data) ->
-        console.log(data);
+        hrtf.angle(data.angle);
 
     </script>
   </body>

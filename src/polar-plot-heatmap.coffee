@@ -5,8 +5,10 @@ class PolarPlotHeatmap extends EventEmitter
     super()
 
     @config =
-      radarRotationSpeed: 10000
+      radarRotationSpeed: 1000
       showRings: false
+      angleIncrement: 15
+
 
     (@config[key] = value for key, value of options)
 
@@ -37,14 +39,33 @@ class PolarPlotHeatmap extends EventEmitter
     out
 
   changeAngle: (angle) ->
+    previousAngle = @currentAngle - @config.angleIncrement
     @direction
-      .attr("transform", =>
-        "rotate(#{angle - @plot.config.zeroOffset})"
+      .transition()
+      .ease("linear")
+      .attrTween("transform", (d, i) =>
+        interpolate = d3.interpolate(previousAngle, angle)
+        (t) =>
+          angle = interpolate(t)
+          "rotate(#{angle - @plot.config.zeroOffset})"
       )
+      .duration(@config.radarRotationSpeed)
 
-    @emit 'degreeChange', @dataAtDegree(angle)
+    @emit 'degreeChange', angle: angle
 
-    @currentAngle = angle
+  spin: ->
+    setInterval(=>
+      if @currentAngle == 360
+        @currentAngle = @config.angleIncrement
+      else
+        @currentAngle += @config.angleIncrement
+
+      @changeAngle(@currentAngle)
+    , @config.radarRotationSpeed)
+
+
+    @currentAngle += @config.angleIncrement
+    @changeAngle(@config.angleIncrement)
 
   heatmap: ({@data}) ->
     radialGroup = @radialsGroup
