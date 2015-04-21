@@ -56,6 +56,7 @@ module.exports = Audiogram;
 window.AV = {
   PolarPlot: require('./polar-plot'),
   PolarPlotHeatmap: require('./polar-plot-heatmap'),
+  PolarPlotWaypoints: require('./polar-plot-waypoints'),
   HorizontalBarChart: require('./horizontal-bar-chart'),
   Audiogram: require('./audiogram'),
   MergeablePolarPlots: require('./mergeable-polar-plots'),
@@ -64,7 +65,7 @@ window.AV = {
 };
 
 
-},{"./audiogram":1,"./horizontal-bar-chart":4,"./hrtf":5,"./mergeable-polar-plots":6,"./polar-plot":8,"./polar-plot-heatmap":7,"./spatial-sound":9}],3:[function(require,module,exports){
+},{"./audiogram":1,"./horizontal-bar-chart":4,"./hrtf":5,"./mergeable-polar-plots":6,"./polar-plot":9,"./polar-plot-heatmap":7,"./polar-plot-waypoints":8,"./spatial-sound":10}],3:[function(require,module,exports){
 var EventEmitter,
   __slice = [].slice;
 
@@ -716,6 +717,60 @@ module.exports = PolarPlotHeatmap;
 
 
 },{"./event-emitter":3}],8:[function(require,module,exports){
+var EventEmitter, PolarPlotWaypoints,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('./event-emitter');
+
+PolarPlotWaypoints = (function(_super) {
+  __extends(PolarPlotWaypoints, _super);
+
+  function PolarPlotWaypoints(id, plotOptions) {
+    this.id = id;
+    this.plotOptions = plotOptions;
+    PolarPlotWaypoints.__super__.constructor.call(this);
+    this.plotOptions.directionalLine = false;
+    this.plotOptions.directionalRotation = false;
+  }
+
+  PolarPlotWaypoints.prototype.draw = function(labels) {
+    this.plot = new AV.PolarPlot(this.id, this.plotOptions);
+    return this.plot.draw(labels);
+  };
+
+  PolarPlotWaypoints.prototype.waypoints = function(points) {
+    return this.waypoints = this.plot.graph.selectAll(".waypoints").data(points).enter().append("circle").attr("r", 20).attr("transform", (function(_this) {
+      return function(d) {
+        return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
+      };
+    })(this)).attr("cy", (function(_this) {
+      return function(d) {
+        return _this.plot.customRadius(15);
+      };
+    })(this));
+  };
+
+  PolarPlotWaypoints.prototype.updateWaypoints = function(points) {
+    return this.waypoints.data(points).attr("r", 20).attr("transform", (function(_this) {
+      return function(d) {
+        return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
+      };
+    })(this)).attr("cy", (function(_this) {
+      return function(d) {
+        return _this.plot.customRadius(15);
+      };
+    })(this));
+  };
+
+  return PolarPlotWaypoints;
+
+})(EventEmitter);
+
+module.exports = PolarPlotWaypoints;
+
+
+},{"./event-emitter":3}],9:[function(require,module,exports){
 var EventEmitter, PolarPlot, renderCircles, renderDirection, renderRadialAxis, renderRingAxis,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -975,7 +1030,7 @@ renderDirection = function(graph, config, radarCallback) {
 module.exports = PolarPlot;
 
 
-},{"./event-emitter":3}],9:[function(require,module,exports){
+},{"./event-emitter":3}],10:[function(require,module,exports){
 
 
 

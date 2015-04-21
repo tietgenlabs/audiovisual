@@ -1,6 +1,7 @@
 window.AV =
   PolarPlot: require('./polar-plot')
   PolarPlotHeatmap: require('./polar-plot-heatmap')
+  PolarPlotWaypoints: require('./polar-plot-waypoints')
   HorizontalBarChart: require('./horizontal-bar-chart')
   Audiogram: require('./audiogram')
   MergeablePolarPlots: require('./mergeable-polar-plots')
