@@ -740,13 +740,13 @@ PolarPlotWaypoints = (function(_super) {
   };
 
   PolarPlotWaypoints.prototype.waypoints = function(points) {
-    return this.waypoints = this.plot.graph.selectAll(".waypoints").data(points).enter().append("circle").attr("r", 20).attr("transform", (function(_this) {
+    return this.waypoints = this.plot.graph.selectAll(".waypoints").data(points).enter().append("circle").attr("r", 10).attr("transform", (function(_this) {
       return function(d) {
         return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
       };
     })(this)).attr("cy", (function(_this) {
       return function(d) {
-        return _this.plot.customRadius(15);
+        return _this.plot.customRadius(5);
       };
     })(this));
   };

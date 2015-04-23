@@ -16,11 +16,11 @@ class PolarPlotWaypoints extends EventEmitter
       .data(points)
       .enter()
       .append("circle")
-      .attr("r", 20)
+      .attr("r", 10)
       .attr("transform", (d) =>
         "rotate(#{d.angle + (@plot.config.zeroOffset * 2)})"
       )
-      .attr("cy", (d) => @plot.customRadius(15))
+      .attr("cy", (d) => @plot.customRadius(5))
 
   updateWaypoints: (points) ->
     @waypoints.data(points)
