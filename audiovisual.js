@@ -732,6 +732,7 @@ PolarPlotWaypoints = (function(_super) {
     PolarPlotWaypoints.__super__.constructor.call(this);
     this.plotOptions.directionalLine = false;
     this.plotOptions.directionalRotation = false;
+    this.plotOptions.outerPaddingForAxisLabels = 100;
   }
 
   PolarPlotWaypoints.prototype.draw = function(labels) {
@@ -740,32 +741,45 @@ PolarPlotWaypoints = (function(_super) {
   };
 
   PolarPlotWaypoints.prototype.waypoints = function(points) {
-    this.waypoints = this.plot.graph.append("g").selectAll("circle.waypoint").data(points);
-    return this.waypoints.enter().append("circle").attr('class', 'waypoint').attr("r", 10).style('opacity', 0).attr("transform", (function(_this) {
+    this.waypoints = this.plot.graph.append("g").selectAll(".waypoint").data(points).enter().append("g").attr("transform", (function(_this) {
       return function(d) {
-        return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
-      };
-    })(this)).attr("cy", (function(_this) {
-      return function(d) {
-        return _this.plot.customRadius(-20);
+        return "rotate(" + (d.angle - _this.plot.config.zeroOffset) + ")";
       };
     })(this));
+    return this.images = this.waypoints.append("svg:image").attr('class', 'waypoint').attr("xlink:href", "http://icons.iconarchive.com/icons/hopstarter/sleek-xp-software/256/Yahoo-Messenger-icon.png").attr("x", this.plot.config.radius - 140).attr("y", (function(_this) {
+      return function(d) {
+        return -_this.plot.customRadius(-20) - _this.plot.config.circleLabelOffsetY;
+      };
+    })(this)).attr("transform", (function(_this) {
+      return function(d) {
+        var rotate, translate;
+        translate = "translate(" + _this.plot.config.axisLabelOffsetX + ", " + _this.plot.config.axisLabelOffsetY + ")";
+        rotate = "rotate(" + (_this.plot.config.axisLabelRotationOffset - d.angle) + ", 0, 0)";
+        return "" + translate + " " + rotate;
+      };
+    })(this)).attr("width", "60").attr("height", "60").style('opacity', 0);
   };
 
   PolarPlotWaypoints.prototype.updateWaypoints = function(value) {
-    return this.waypoints.transition().duration(1000).attr('cy', (function(_this) {
-      return function(d) {
-        return _this.plot.customRadius(value);
-      };
-    })(this)).style('opacity', (function(_this) {
-      return function() {
-        if (value === -20) {
-          return 0;
-        } else {
-          return 1;
-        }
-      };
-    })(this));
+    if (value === 0) {
+      return this.images.transition().duration(1000).attr("x", this.plot.config.radius - 30).attr("transform", (function(_this) {
+        return function(d) {
+          var rotate, translate;
+          translate = "translate(" + _this.plot.config.axisLabelOffsetX + ", " + _this.plot.config.axisLabelOffsetY + ")";
+          rotate = "rotate(" + (_this.plot.config.axisLabelRotationOffset - d.angle) + ", " + _this.plot.config.radius + ", 0)";
+          return "" + translate + " " + rotate;
+        };
+      })(this)).style('opacity', 1);
+    } else {
+      return this.images.transition().duration(1000).attr("x", this.plot.config.radius - 140).attr("transform", (function(_this) {
+        return function(d) {
+          var rotate, translate;
+          translate = "translate(" + _this.plot.config.axisLabelOffsetX + ", " + _this.plot.config.axisLabelOffsetY + ")";
+          rotate = "rotate(" + (_this.plot.config.axisLabelRotationOffset - d.angle) + ", 0, 0)";
+          return "" + translate + " " + rotate;
+        };
+      })(this)).style('opacity', 0);
+    }
   };
 
   return PolarPlotWaypoints;

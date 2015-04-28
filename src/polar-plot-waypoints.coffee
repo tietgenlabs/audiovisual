@@ -6,6 +6,7 @@ class PolarPlotWaypoints extends EventEmitter
 
     @plotOptions.directionalLine = false
     @plotOptions.directionalRotation = false
+    @plotOptions.outerPaddingForAxisLabels = 100
 
   draw: (labels) ->
     @plot = new AV.PolarPlot @id, @plotOptions
@@ -13,25 +14,50 @@ class PolarPlotWaypoints extends EventEmitter
 
   waypoints: (points) ->
     @waypoints = @plot.graph.append("g")
-      .selectAll("circle.waypoint")
+      .selectAll(".waypoint")
       .data(points)
-
-    @waypoints
       .enter()
-      .append("circle")
-      .attr('class', 'waypoint')
-      .attr("r", 10)
-      .style('opacity', 0)
+      .append("g")
       .attr("transform", (d) =>
-        "rotate(#{d.angle + (@plot.config.zeroOffset * 2)})"
+        "rotate(#{d.angle - @plot.config.zeroOffset})"
       )
-      .attr("cy", (d) => @plot.customRadius(-20))
+
+    @images = @waypoints.append("svg:image")
+      .attr('class', 'waypoint')
+      .attr("xlink:href", "http://icons.iconarchive.com/icons/hopstarter/sleek-xp-software/256/Yahoo-Messenger-icon.png")
+      .attr("x", @plot.config.radius - 140)
+      .attr("y", (d) => -@plot.customRadius(-20) - @plot.config.circleLabelOffsetY)
+      .attr("transform", (d) =>
+        translate = "translate(#{@plot.config.axisLabelOffsetX}, #{@plot.config.axisLabelOffsetY})"
+        rotate = "rotate(#{@plot.config.axisLabelRotationOffset - d.angle}, 0, 0)"
+        "#{translate} #{rotate}"
+      )
+      .attr("width", "60")
+      .attr("height", "60")
+      .style('opacity', 0)
 
   updateWaypoints: (value) ->
-    @waypoints
-      .transition()
-      .duration(1000)
-      .attr('cy', (d) => @plot.customRadius(value))
-      .style('opacity', => if value == -20 then 0 else 1)
+    if value == 0
+      @images
+        .transition()
+        .duration(1000)
+        .attr("x", @plot.config.radius - 30)
+        .attr("transform", (d) =>
+          translate = "translate(#{@plot.config.axisLabelOffsetX}, #{@plot.config.axisLabelOffsetY})"
+          rotate = "rotate(#{@plot.config.axisLabelRotationOffset - d.angle}, #{@plot.config.radius}, 0)"
+          "#{translate} #{rotate}"
+        )
+        .style('opacity', 1)
+    else
+      @images
+        .transition()
+        .duration(1000)
+        .attr("x", @plot.config.radius - 140)
+        .attr("transform", (d) =>
+          translate = "translate(#{@plot.config.axisLabelOffsetX}, #{@plot.config.axisLabelOffsetY})"
+          rotate = "rotate(#{@plot.config.axisLabelRotationOffset - d.angle}, 0, 0)"
+          "#{translate} #{rotate}"
+        )
+        .style('opacity', 0)
 
 module.exports = PolarPlotWaypoints
