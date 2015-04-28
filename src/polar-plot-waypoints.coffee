@@ -12,22 +12,26 @@ class PolarPlotWaypoints extends EventEmitter
     @plot.draw(labels)
 
   waypoints: (points) ->
-    @waypoints = @plot.graph.selectAll(".waypoints")
+    @waypoints = @plot.graph.append("g")
+      .selectAll("circle.waypoint")
       .data(points)
+
+    @waypoints
       .enter()
       .append("circle")
+      .attr('class', 'waypoint')
       .attr("r", 10)
+      .style('opacity', 0)
       .attr("transform", (d) =>
         "rotate(#{d.angle + (@plot.config.zeroOffset * 2)})"
       )
-      .attr("cy", (d) => @plot.customRadius(5))
+      .attr("cy", (d) => @plot.customRadius(-20))
 
-  updateWaypoints: (points) ->
-    @waypoints.data(points)
-      .attr("r", 20)
-      .attr("transform", (d) =>
-        "rotate(#{d.angle + (@plot.config.zeroOffset * 2)})"
-      )
-      .attr("cy", (d) => @plot.customRadius(15))
+  updateWaypoints: (value) ->
+    @waypoints
+      .transition()
+      .duration(1000)
+      .attr('cy', (d) => @plot.customRadius(value))
+      .style('opacity', => if value == -20 then 0 else 1)
 
 module.exports = PolarPlotWaypoints

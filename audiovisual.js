@@ -740,25 +740,30 @@ PolarPlotWaypoints = (function(_super) {
   };
 
   PolarPlotWaypoints.prototype.waypoints = function(points) {
-    return this.waypoints = this.plot.graph.selectAll(".waypoints").data(points).enter().append("circle").attr("r", 10).attr("transform", (function(_this) {
+    this.waypoints = this.plot.graph.append("g").selectAll("circle.waypoint").data(points);
+    return this.waypoints.enter().append("circle").attr('class', 'waypoint').attr("r", 10).style('opacity', 0).attr("transform", (function(_this) {
       return function(d) {
         return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
       };
     })(this)).attr("cy", (function(_this) {
       return function(d) {
-        return _this.plot.customRadius(5);
+        return _this.plot.customRadius(-20);
       };
     })(this));
   };
 
-  PolarPlotWaypoints.prototype.updateWaypoints = function(points) {
-    return this.waypoints.data(points).attr("r", 20).attr("transform", (function(_this) {
+  PolarPlotWaypoints.prototype.updateWaypoints = function(value) {
+    return this.waypoints.transition().duration(1000).attr('cy', (function(_this) {
       return function(d) {
-        return "rotate(" + (d.angle + (_this.plot.config.zeroOffset * 2)) + ")";
+        return _this.plot.customRadius(value);
       };
-    })(this)).attr("cy", (function(_this) {
-      return function(d) {
-        return _this.plot.customRadius(15);
+    })(this)).style('opacity', (function(_this) {
+      return function() {
+        if (value === -20) {
+          return 0;
+        } else {
+          return 1;
+        }
       };
     })(this));
   };
