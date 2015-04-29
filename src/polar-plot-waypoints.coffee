@@ -25,7 +25,7 @@ class PolarPlotWaypoints extends EventEmitter
     @images = @waypoints.append("svg:image")
       .attr('class', 'waypoint')
       .attr("xlink:href", (d) -> d.imageUrl)
-      .attr("x", @plot.config.radius - 140)
+      .attr("x", @plot.config.radius - 155)
       .attr("y", (d) => -@plot.customRadius(-20) - @plot.config.circleLabelOffsetY)
       .attr("transform", (d) =>
         translate = "translate(#{@plot.config.axisLabelOffsetX}, #{@plot.config.axisLabelOffsetY})"
@@ -52,7 +52,7 @@ class PolarPlotWaypoints extends EventEmitter
       @images
         .transition()
         .duration(1000)
-        .attr("x", @plot.config.radius - 140)
+        .attr("x", @plot.config.radius - 155)
         .attr("transform", (d) =>
           translate = "translate(#{@plot.config.axisLabelOffsetX}, #{@plot.config.axisLabelOffsetY})"
           rotate = "rotate(#{@plot.config.axisLabelRotationOffset - d.angle}, 0, 0)"

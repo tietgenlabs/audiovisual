@@ -748,7 +748,7 @@ PolarPlotWaypoints = (function(_super) {
     })(this));
     return this.images = this.waypoints.append("svg:image").attr('class', 'waypoint').attr("xlink:href", function(d) {
       return d.imageUrl;
-    }).attr("x", this.plot.config.radius - 140).attr("y", (function(_this) {
+    }).attr("x", this.plot.config.radius - 155).attr("y", (function(_this) {
       return function(d) {
         return -_this.plot.customRadius(-20) - _this.plot.config.circleLabelOffsetY;
       };
@@ -773,7 +773,7 @@ PolarPlotWaypoints = (function(_super) {
         };
       })(this)).style('opacity', 1);
     } else {
-      return this.images.transition().duration(1000).attr("x", this.plot.config.radius - 140).attr("transform", (function(_this) {
+      return this.images.transition().duration(1000).attr("x", this.plot.config.radius - 155).attr("transform", (function(_this) {
         return function(d) {
           var rotate, translate;
           translate = "translate(" + _this.plot.config.axisLabelOffsetX + ", " + _this.plot.config.axisLabelOffsetY + ")";
