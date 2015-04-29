@@ -24,7 +24,7 @@ class PolarPlotWaypoints extends EventEmitter
 
     @images = @waypoints.append("svg:image")
       .attr('class', 'waypoint')
-      .attr("xlink:href", "http://icons.iconarchive.com/icons/hopstarter/sleek-xp-software/256/Yahoo-Messenger-icon.png")
+      .attr("xlink:href", (d) -> d.imageUrl)
       .attr("x", @plot.config.radius - 140)
       .attr("y", (d) => -@plot.customRadius(-20) - @plot.config.circleLabelOffsetY)
       .attr("transform", (d) =>

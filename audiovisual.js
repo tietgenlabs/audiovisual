@@ -746,7 +746,9 @@ PolarPlotWaypoints = (function(_super) {
         return "rotate(" + (d.angle - _this.plot.config.zeroOffset) + ")";
       };
     })(this));
-    return this.images = this.waypoints.append("svg:image").attr('class', 'waypoint').attr("xlink:href", "http://icons.iconarchive.com/icons/hopstarter/sleek-xp-software/256/Yahoo-Messenger-icon.png").attr("x", this.plot.config.radius - 140).attr("y", (function(_this) {
+    return this.images = this.waypoints.append("svg:image").attr('class', 'waypoint').attr("xlink:href", function(d) {
+      return d.imageUrl;
+    }).attr("x", this.plot.config.radius - 140).attr("y", (function(_this) {
       return function(d) {
         return -_this.plot.customRadius(-20) - _this.plot.config.circleLabelOffsetY;
       };
