@@ -81,6 +81,10 @@ class HRTF extends EventEmitter
     , 1000)
     @newSource()
 
+  stop: ->
+    @source1.stop(0)
+    @source2.stop(0)
+
   angle: (angle) ->
     buffer = @hrtfs[Math.round(angle / @config.angleIncrement)].buffer
 

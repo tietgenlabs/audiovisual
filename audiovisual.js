@@ -354,6 +354,11 @@ HRTF = (function(_super) {
     return this.newSource();
   };
 
+  HRTF.prototype.stop = function() {
+    this.source1.stop(0);
+    return this.source2.stop(0);
+  };
+
   HRTF.prototype.angle = function(angle) {
     var buffer;
     buffer = this.hrtfs[Math.round(angle / this.config.angleIncrement)].buffer;
