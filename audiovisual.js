@@ -264,8 +264,9 @@ EventEmitter = require('./event-emitter');
 HRTF = (function(_super) {
   __extends(HRTF, _super);
 
-  function HRTF(hrtfs) {
-    var FS, buffer, bufferChannelLeft, bufferChannelRight, hrtf, i, sample, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+  function HRTF(sampleRate, hrtfs) {
+    var buffer, bufferChannelLeft, bufferChannelRight, hrtf, i, sample, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+    this.sampleRate = sampleRate;
     this.hrtfs = hrtfs;
     this.config = {
       fadeTime: 50,
@@ -274,13 +275,12 @@ HRTF = (function(_super) {
     };
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     this.audioContext = new AudioContext();
-    FS = 44100;
     this.isPlaying1 = false;
     this.isPlaying2 = false;
     _ref = this.hrtfs;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       hrtf = _ref[_i];
-      buffer = this.audioContext.createBuffer(2, FS, FS);
+      buffer = this.audioContext.createBuffer(2, this.sampleRate, this.sampleRate);
       bufferChannelLeft = buffer.getChannelData(0);
       bufferChannelRight = buffer.getChannelData(1);
       _ref1 = hrtf.HRIR_left;
@@ -311,8 +311,8 @@ HRTF = (function(_super) {
     var bufferSize, i, noiseSourceNode1, noiseSourceNode2, output, _i;
     if (!this.noiseBuffer) {
       this["static"] = true;
-      bufferSize = 2 * 44100;
-      this.noiseBuffer = this.audioContext.createBuffer(1, bufferSize, 44100);
+      bufferSize = 2 * this.sampleRate;
+      this.noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.sampleRate);
       output = this.noiseBuffer.getChannelData(0);
       for (i = _i = 0; 0 <= bufferSize ? _i <= bufferSize : _i >= bufferSize; i = 0 <= bufferSize ? ++_i : --_i) {
         output[i] = Math.random() * 2 - 1;

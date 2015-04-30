@@ -1,7 +1,7 @@
 EventEmitter = require './event-emitter'
 
 class HRTF extends EventEmitter
-  constructor: (@hrtfs) ->
+  constructor: (@sampleRate, @hrtfs) ->
     @config =
       fadeTime: 50
       fadeStepSize: 0.1
@@ -10,13 +10,11 @@ class HRTF extends EventEmitter
     window.AudioContext = window.AudioContext || window.webkitAudioContext
     @audioContext = new AudioContext()
 
-    FS = 44100
-
     @isPlaying1 = false
     @isPlaying2 = false
 
     for hrtf in @hrtfs
-      buffer = @audioContext.createBuffer(2, FS, FS)
+      buffer = @audioContext.createBuffer(2, @sampleRate, @sampleRate)
       bufferChannelLeft = buffer.getChannelData(0)
       bufferChannelRight = buffer.getChannelData(1)
 
@@ -37,8 +35,8 @@ class HRTF extends EventEmitter
   connect: ->
     unless @noiseBuffer
       @static = true
-      bufferSize = 2 * 44100
-      @noiseBuffer = @audioContext.createBuffer(1, bufferSize, 44100)
+      bufferSize = 2 * @sampleRate
+      @noiseBuffer = @audioContext.createBuffer(1, bufferSize, @sampleRate)
       output = @noiseBuffer.getChannelData(0)
       for i in [0..bufferSize]
         output[i] = Math.random() * 2 - 1
